@@ -14,16 +14,16 @@ public class Longtime
     {
     // Ha bármelyik megegyezik range (vagy nagyobb),
     // Akkor a további részek nem számítanak
-    private static final int YEAR = 0;      // 1601 - 2999
-    private static final int MONTH = 1;     // 1 - 12 13 - next month
-    private static final int DAY = 2;       // 1 - 31 32 - next day
+    public static final int YEAR = 0;      // 1601 - 2999
+    public static final int MONTH = 1;     // 1 - 12 13 - next month
+    public static final int DAY = 2;       // 1 - 31 32 - next day
 
-    private static final int DAY_NAME = 3;  // 0 - 6
+    public static final int DAY_NAME = 3;  // 0 - 6
 
-    private static final int HOUR = 4;      // 0 - 23
-    private static final int MIN = 5;       // 0 - 59
-    private static final int SEC = 6;       // 0 - 59
-    private static final int MILL = 7;      // 0 - 999
+    public static final int HOUR = 4;      // 0 - 23
+    public static final int MIN = 5;       // 0 - 59
+    public static final int SEC = 6;       // 0 - 59
+    public static final int MILL = 7;      // 0 - 999
 
     private static final int TIME_PARTS = 8;
 
@@ -85,6 +85,12 @@ public class Longtime
         return time;
         }
 
+    // NINCS ELLENŐRZÉS!!! - NEM KELLENE?
+    public int get( int part )
+        {
+        return this.part[ part ];
+        }
+    
     public boolean isError()
         {
         return error;
@@ -229,6 +235,13 @@ public class Longtime
             }
         }
 
+    public boolean clearDate()
+        {
+        zeroAbove( HOUR );
+        convertParts2Long();
+
+        return error;
+        }
 
     private void convertParts2Long()
         {

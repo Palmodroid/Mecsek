@@ -3,6 +3,7 @@ package digitalgarden.mecsek.monthlyviewer;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.util.Log;
 
 import digitalgarden.mecsek.utils.Longtime;
 
@@ -19,6 +20,9 @@ public class MonthlyViewerAdapter extends FragmentStatePagerAdapter
         {
         super(fragmentManager);
         this.today = today;
+
+        today.clearDate();
+        Log.d("TODAY", today.toString());
         }
 
     // Returns total number of pages

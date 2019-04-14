@@ -65,17 +65,10 @@ public class ComplexDailyView extends BackgroundView implements View.OnClickList
         }
 
 
-    public void setDayOfMonth(Longtime longtime )
+    public void setDayOfMonth( String dayOfMonth, int dayColor )
         {
-        this.dayOfMonth = longtime.toStringDayOfMonth();
-        int dayName = longtime.getDayName();
-
-        if ( dayName < 5 ) // Hétköznap
-            dayColor = 0xFFE3D26F;
-        else if ( dayName < 6 ) // Szombat
-            dayColor = 0xFFCDA642;
-        else // Vasárnap
-            dayColor = 0xFFAD6519;
+        this.dayOfMonth = dayOfMonth;
+        this.dayColor = dayColor;
         }
 
     public void setDayPaint(TextPaint dayPaint)
