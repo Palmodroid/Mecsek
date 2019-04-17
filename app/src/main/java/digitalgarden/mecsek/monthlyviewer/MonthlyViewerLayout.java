@@ -77,15 +77,19 @@ public class MonthlyViewerLayout extends CheckedLayout
         longtime.addDays( -dayName );
 
         int dayColor;
+long prevday = 0L;
         for (int n= 0; n < getChildCount(); n++)
             {
             dayName = longtime.getDayName();
 
-            Longtime longtoday = new Longtime( today );
-            Log.d("TODAY",
-                    "Today (" + longtoday.toString() + ") as long: " + today + " This day (" + longtime.toString() +
+            Log.d("DAY",
+                    " This day (" + longtime.toString() +
                             ") as " +
-                            "long: " + longtime.get());
+                            "long: " + longtime.get() +
+                            " difference: " + (longtime.get()-prevday) +
+                            " daycounter: " + (longtime.get()/838062225L) +
+                            " days since epoch: " + longtime.daysSinceEpoch());
+            prevday = longtime.get();
 
             if ( today == longtime.get() )
                 dayColor = 0xFFCD3925;

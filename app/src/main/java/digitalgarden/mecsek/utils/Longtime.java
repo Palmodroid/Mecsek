@@ -338,7 +338,7 @@ public class Longtime
         }
 
 
-    private int daysSinceEpoch()
+    public int daysSinceEpoch()
         {
         // Epoch 1601.01.01 - Csak 400-zal osztható év utáni lehet !!
         // És ez pont hétfő! 2001 is.
@@ -404,14 +404,6 @@ public class Longtime
     public int getDayName()
         {
         return part[DAY_NAME];
-        }
-
-    public int difference(Longtime second)
-        {
-
-        second.part[0] = 0;
-
-        return 1;
         }
 
     public boolean addDays(int days)

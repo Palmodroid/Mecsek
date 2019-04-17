@@ -81,7 +81,7 @@
         </activity>
 
         <activity
-            android:name=".monthlyviewer.MonthlyViewerActivity"
+            android:name=".monthlyviewer.DiaryActivity"
             android:label="Monthly Viewer"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>

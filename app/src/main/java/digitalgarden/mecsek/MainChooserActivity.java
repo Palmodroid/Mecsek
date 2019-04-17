@@ -18,7 +18,7 @@ import digitalgarden.mecsek.database.medications.MedicationsControllActivity;
 import digitalgarden.mecsek.database.patients.PatientsControllActivity;
 import digitalgarden.mecsek.database.pills.PillsControllActivity;
 import digitalgarden.mecsek.exportimport.AsyncTaskDialogFragment;
-import digitalgarden.mecsek.monthlyviewer.MonthlyViewerActivity;
+import digitalgarden.mecsek.monthlyviewer.DiaryActivity;
 import digitalgarden.mecsek.permission.PermissionRequestDialog;
 import digitalgarden.mecsek.scribe.Scribe;
 import digitalgarden.mecsek.selectfile.SelectFileActivity;
@@ -146,7 +146,7 @@ public class MainChooserActivity extends FragmentActivity implements PermissionR
 
 					Intent i = new Intent();
 
-					i.setClass(MainChooserActivity.this, MonthlyViewerActivity.class);
+					i.setClass(MainChooserActivity.this, DiaryActivity.class);
 					startActivity(i);
 					}
 				});

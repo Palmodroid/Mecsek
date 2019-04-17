@@ -8,8 +8,8 @@ android:layout_width="match_parent"
 android:layout_height="match_parent"
 android:orientation="vertical"
 app:layout_behavior="@string/appbar_scrolling_view_behavior"
-tools:context="digitalgarden.mecsek.monthlyviewer.MonthlyViewerActivity"
-tools:showIn="@layout/activity_monthly_viewer">
+tools:context="digitalgarden.mecsek.monthlyviewer.DiaryActivity"
+tools:showIn="@layout/activity_diary">
 
 <TextView
     android:id="@+id/year_month_text_view"
@@ -43,6 +43,7 @@ tools:showIn="@layout/activity_monthly_viewer">
     android:horizontalSpacing="4dp" />
 
 <TextView
+    android:id="@+id/test_view"
     android:layout_width="wrap_content"
     android:layout_height="160dp"
     android:text="Hello World!"/>

@@ -16,8 +16,12 @@ import android.widget.Toast;
 import digitalgarden.mecsek.R;
 import digitalgarden.mecsek.utils.Longtime;
 
-
-public class MonthlyViewerActivity extends AppCompatActivity
+/**
+ * DiaryActivity shows the ViewPager, which gets its data from the DiaryAdapter.
+ * MonthlyViewerFragment shows the days of one month, as ComplexDailyView-s of MonthlyViewerLayout.
+ * MonthlyViewerData stores all data on a daily basis.
+ */
+public class DiaryActivity extends AppCompatActivity
     {
     FragmentStatePagerAdapter adapterViewPager;
 
@@ -28,7 +32,7 @@ public class MonthlyViewerActivity extends AppCompatActivity
         today.set();
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_monthly_viewer);
+        setContentView(R.layout.activity_diary);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -43,8 +47,8 @@ public class MonthlyViewerActivity extends AppCompatActivity
                 }
             });
 
-        ViewPager vpPager = (ViewPager) findViewById(R.id.content_monthly_viewer);
-        adapterViewPager = new MonthlyViewerAdapter( getSupportFragmentManager(), today);
+        ViewPager vpPager = (ViewPager) findViewById(R.id.content_diary);
+        adapterViewPager = new DiaryAdapter( getSupportFragmentManager(), today);
         vpPager.setAdapter(adapterViewPager);
         vpPager.setCurrentItem( today.monthsSinceEpoch() );
         vpPager.setOffscreenPageLimit(1);
@@ -59,7 +63,7 @@ public class MonthlyViewerActivity extends AppCompatActivity
             @Override
             public void onPageSelected(int position)
                 {
-                Toast.makeText(MonthlyViewerActivity.this,
+                Toast.makeText(DiaryActivity.this,
                         "Selected page position: " + position, Toast.LENGTH_SHORT).show();
                 }
 
