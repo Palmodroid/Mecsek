@@ -1,13 +1,10 @@
-package digitalgarden.mecsek.monthlyviewer;
+package digitalgarden.mecsek.diary;
 
 import android.content.Context;
 import android.os.Handler;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 
-import digitalgarden.mecsek.R;
-import digitalgarden.mecsek.utils.Longtime;
 import digitalgarden.mecsek.viewutils.CheckedLayout;
 import digitalgarden.mecsek.viewutils.TextPaint;
 
@@ -31,7 +28,6 @@ public class MonthlyViewerLayout extends CheckedLayout
         super(context, attrs, defStyleAttr);
         }
 
-    Longtime longtime;
     TextPaint dayPaint;
     TextPaint rowPaint;
 
@@ -54,60 +50,6 @@ public class MonthlyViewerLayout extends CheckedLayout
         childView.setRowPaint( rowPaint );
 
         return childView;
-        }
-
-
-    /**
-     * Secondary parameters for this view
-     * @param monthsSinceEpoch
-     * @param today
-     * @return year and month as string
-     */
-    public String setMonthsSinceEpoch( int monthsSinceEpoch, long today ) // Longtime longtime)
-        {
-        longtime = new Longtime();
-        longtime.setYearMonth( monthsSinceEpoch );
-        longtime.setDayOfMonth(1);
-        // YEAR MONTH and DAY (DAY_NAME) is set, but TIME is not
-
-        String yearMonth = longtime.toStringYearMonth( true );
-        int month = longtime.get(Longtime.MONTH);
-
-        int dayName = longtime.getDayName();
-        longtime.addDays( -dayName );
-
-        int dayColor;
-long prevday = 0L;
-        for (int n= 0; n < getChildCount(); n++)
-            {
-            dayName = longtime.getDayName();
-
-            Log.d("DAY",
-                    " This day (" + longtime.toString() +
-                            ") as " +
-                            "long: " + longtime.get() +
-                            " difference: " + (longtime.get()-prevday) +
-                            " daycounter: " + (longtime.get()/838062225L) +
-                            " days since epoch: " + longtime.daysSinceEpoch());
-            prevday = longtime.get();
-
-            if ( today == longtime.get() )
-                dayColor = 0xFFCD3925;
-            else if ( dayName < 5 ) // Hétköznap
-                dayColor = 0xFFE3D26F;
-            else if ( dayName < 6 ) // Szombat
-                dayColor = 0xFFCDA642;
-            else // Vasárnap
-                dayColor = 0xFFAD6519;
-
-            if ( month != longtime.get(Longtime.MONTH) )
-                dayColor &= 0x40FFFFFF;
-
-            ((ComplexDailyView) getChildAt(n)).setDayOfMonth(longtime.toStringDayOfMonth(), dayColor);
-            longtime.addDays(1); // 86350
-            }
-
-        return yearMonth;
         }
 
 

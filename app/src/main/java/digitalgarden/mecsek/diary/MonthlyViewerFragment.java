@@ -1,30 +1,14 @@
-package digitalgarden.mecsek.monthlyviewer;
+package digitalgarden.mecsek.diary;
 
 
-import android.database.Cursor;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.CursorLoader;
-import android.support.v4.content.Loader;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import digitalgarden.mecsek.R;
-import digitalgarden.mecsek.database.books.BooksTable;
-import digitalgarden.mecsek.database.calendar.CalendarTable;
-import digitalgarden.mecsek.scribe.Scribe;
-import digitalgarden.mecsek.utils.Longtime;
-
-import static digitalgarden.mecsek.database.DatabaseMirror.column;
-import static digitalgarden.mecsek.database.DatabaseMirror.table;
-import static digitalgarden.mecsek.database.library.LibraryDatabase.BOOKS;
-import static digitalgarden.mecsek.database.library.LibraryDatabase.CALENDAR;
 
 public class MonthlyViewerFragment extends Fragment
     {
@@ -69,8 +53,6 @@ public class MonthlyViewerFragment extends Fragment
 
         monthsSinceEpoch = getArguments().getInt("MSE");
         today = getArguments().getLong("TODAY");
-
-        monthlyViewerData = new MonthlyViewerData(this, monthsSinceEpoch );
         }
 
 
@@ -88,11 +70,12 @@ public class MonthlyViewerFragment extends Fragment
         // be changed)
         MonthlyViewerLayout monthlyViewerLayout =
                 ((MonthlyViewerLayout)view.findViewById(R.id.diary_layout));
-        String yearMonth = monthlyViewerLayout.setMonthsSinceEpoch( monthsSinceEpoch, today );
+        monthlyViewerData = new MonthlyViewerData(this, monthlyViewerLayout,
+                monthsSinceEpoch, today );
 
         TextView yearMonthTextView =
                 (TextView) view.findViewById(R.id.year_month_text_view);
-        yearMonthTextView.setText( yearMonth );
+        yearMonthTextView.setText( monthlyViewerData.getYearMonth() );
 
         testView = view.findViewById( R.id.test_view );
 

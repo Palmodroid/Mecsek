@@ -8,7 +8,7 @@ android:layout_width="match_parent"
 android:layout_height="match_parent"
 android:orientation="vertical"
 app:layout_behavior="@string/appbar_scrolling_view_behavior"
-tools:context="digitalgarden.mecsek.monthlyviewer.DiaryActivity"
+tools:context="digitalgarden.mecsek.diary.DiaryActivity"
 tools:showIn="@layout/activity_diary">
 
 <TextView
@@ -17,7 +17,7 @@ tools:showIn="@layout/activity_diary">
     android:layout_height="wrap_content"
     android:textSize="24sp"/>
 
-<digitalgarden.mecsek.monthlyviewer.MonthlyHeaderLayout
+<digitalgarden.mecsek.diary.MonthlyHeaderLayout
     android:id="@+id/diary_header"
     android:layout_width="match_parent"
     android:layout_weight="1"
@@ -31,7 +31,7 @@ tools:showIn="@layout/activity_diary">
     android:verticalSpacing="4dp"
     android:horizontalSpacing="4dp" />
 
-<digitalgarden.mecsek.monthlyviewer.MonthlyViewerLayout
+<digitalgarden.mecsek.diary.MonthlyViewerLayout
     android:id="@+id/diary_layout"
     android:layout_width="match_parent"
     android:layout_height="1dp"

@@ -18,7 +18,7 @@ import digitalgarden.mecsek.database.medications.MedicationsControllActivity;
 import digitalgarden.mecsek.database.patients.PatientsControllActivity;
 import digitalgarden.mecsek.database.pills.PillsControllActivity;
 import digitalgarden.mecsek.exportimport.AsyncTaskDialogFragment;
-import digitalgarden.mecsek.monthlyviewer.DiaryActivity;
+import digitalgarden.mecsek.diary.DiaryActivity;
 import digitalgarden.mecsek.permission.PermissionRequestDialog;
 import digitalgarden.mecsek.scribe.Scribe;
 import digitalgarden.mecsek.selectfile.SelectFileActivity;

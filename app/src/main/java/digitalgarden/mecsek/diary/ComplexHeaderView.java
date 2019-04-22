@@ -1,4 +1,4 @@
-package digitalgarden.mecsek.monthlyviewer;
+package digitalgarden.mecsek.diary;
 
 import android.content.Context;
 import android.graphics.Canvas;

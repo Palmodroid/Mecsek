@@ -1,18 +1,14 @@
-package digitalgarden.mecsek.monthlyviewer;
+package digitalgarden.mecsek.diary;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.media.ThumbnailUtils;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
-import digitalgarden.mecsek.R;
-import digitalgarden.mecsek.utils.Longtime;
 import digitalgarden.mecsek.viewutils.BackgroundView;
 import digitalgarden.mecsek.viewutils.TextPaint;
 
@@ -34,6 +30,9 @@ public class ComplexDailyView extends BackgroundView implements View.OnClickList
     // text paint tod draw rows
     private TextPaint rowPaint;
 
+    // Data for this day
+    private ComplexDailyData complexDailyData;
+
     private int rowy;
     private int rowx;
     private int rowHeight;
@@ -45,9 +44,9 @@ public class ComplexDailyView extends BackgroundView implements View.OnClickList
     private int bitmapX;
     private int bitmapY;
 
-    // the day to show
-    private String dayOfMonth = "";
-    private int dayColor = 0;
+//    // the day to show
+//    private String dayOfMonth = "";
+//    private int dayColor = 0;
 
     public ComplexDailyView(Context context)
         {
@@ -65,10 +64,15 @@ public class ComplexDailyView extends BackgroundView implements View.OnClickList
         }
 
 
-    public void setDayOfMonth( String dayOfMonth, int dayColor )
+//    public void setDayOfMonth( String dayOfMonth, int dayColor )
+//        {
+//        this.dayOfMonth = dayOfMonth;
+//        this.dayColor = dayColor;
+//        }
+
+    public void setData( ComplexDailyData complexDailyData )
         {
-        this.dayOfMonth = dayOfMonth;
-        this.dayColor = dayColor;
+        this.complexDailyData = complexDailyData;
         }
 
     public void setDayPaint(TextPaint dayPaint)
@@ -119,7 +123,7 @@ public class ComplexDailyView extends BackgroundView implements View.OnClickList
     @Override
     public void onClick(View v)
         {
-        Toast.makeText( getContext(), dayOfMonth, Toast.LENGTH_SHORT).show();
+        Toast.makeText( getContext(), complexDailyData.getDayOfMonth(), Toast.LENGTH_SHORT).show();
         }
 
     @Override
@@ -137,7 +141,8 @@ public class ComplexDailyView extends BackgroundView implements View.OnClickList
         dayPaint.setTextXY( millis(width, 480),
                 millis(width, 50) + (imageSize / 2));
 
-        rowPaint.calculateTextSizeForBox( millis( imageSize, 300), millis( imageSize, 300) );
+//        rowPaint.calculateTextSizeForBox( millis( imageSize, 300), millis( imageSize, 300) );
+        rowPaint.calculateTextSizeForBox( millis( imageSize, 800), millis( imageSize, 800) );
 
         rowy = millis(width, 100) + (imageSize);
         rowx = millis(width, 50);
@@ -160,34 +165,24 @@ public class ComplexDailyView extends BackgroundView implements View.OnClickList
         bitmapY = millis(width, 50) + 3;
         }
 
-    int n = 0;
-
     @Override
     protected void onDraw(Canvas canvas)
         {
-        getBackgroundPaint().setColor( dayColor );
+        getBackgroundPaint().setColor( complexDailyData.getDayColor() );
 
         super.onDraw(canvas);
 
-        dayPaint.drawText(canvas, dayOfMonth);
+        dayPaint.drawText(canvas, complexDailyData.getDayOfMonth() );
 
         int y = rowy;
-        rowPaint.drawEllipsizedText(canvas,
-                "Hello világ!", rowx, y, rowMaxWidth );
-
-        y += rowHeight;
-        rowPaint.drawEllipsizedText(canvas,
-                "Abraka dabra darabka", rowx, y, rowMaxWidth );
-
-        y += rowHeight;
-        rowPaint.drawEllipsizedText(canvas,
-                "Akármikor egy almafa alatt egyedem begyedem tengertánc", rowx, y, rowMaxWidth );
-
-        if ( n % 2 == 1 )
+        for ( ComplexDailyData.EntryData entry : complexDailyData.getEntryDataList() )
             {
-            // canvas.drawBitmap(icon, bitmapX, bitmapY, null);
+            rowPaint.drawEllipsizedText(canvas,
+                    entry.getNote(), rowx, y, rowMaxWidth );
+            y += rowHeight;
             }
-        n++;
+
+        // canvas.drawBitmap(icon, bitmapX, bitmapY, null);
         }
 
     }
