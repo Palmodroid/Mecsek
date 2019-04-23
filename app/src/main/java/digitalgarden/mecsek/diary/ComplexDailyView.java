@@ -174,12 +174,15 @@ public class ComplexDailyView extends BackgroundView implements View.OnClickList
 
         dayPaint.drawText(canvas, complexDailyData.getDayOfMonth() );
 
-        int y = rowy;
-        for ( ComplexDailyData.EntryData entry : complexDailyData.getEntryDataList() )
+        if ( complexDailyData.getEntryDataList() != null )
             {
-            rowPaint.drawEllipsizedText(canvas,
-                    entry.getNote(), rowx, y, rowMaxWidth );
-            y += rowHeight;
+            int y = rowy;
+            for (ComplexDailyData.EntryData entry : complexDailyData.getEntryDataList())
+                {
+                rowPaint.drawEllipsizedText(canvas,
+                        entry.getNote(), rowx, y, rowMaxWidth);
+                y += rowHeight;
+                }
             }
 
         // canvas.drawBitmap(icon, bitmapX, bitmapY, null);

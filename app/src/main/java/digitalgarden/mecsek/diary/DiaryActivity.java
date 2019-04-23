@@ -3,6 +3,7 @@ package digitalgarden.mecsek.diary;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -30,6 +31,7 @@ public class DiaryActivity extends AppCompatActivity
         {
         Longtime today = new Longtime();
         today.set();
+        today.clearDate();
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_diary);
@@ -48,7 +50,7 @@ public class DiaryActivity extends AppCompatActivity
             });
 
         ViewPager vpPager = (ViewPager) findViewById(R.id.content_diary);
-        adapterViewPager = new DiaryAdapter( getSupportFragmentManager(), today);
+        adapterViewPager = new DiaryAdapter( getSupportFragmentManager(), today.get());
         vpPager.setAdapter(adapterViewPager);
         vpPager.setCurrentItem( today.monthsSinceEpoch() );
         vpPager.setOffscreenPageLimit(1);

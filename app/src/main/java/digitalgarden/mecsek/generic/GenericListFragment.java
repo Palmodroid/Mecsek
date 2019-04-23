@@ -199,7 +199,8 @@ public abstract class GenericListFragment extends ListFragment
 	        	{
 	        	if (getActivity() != null)
 	        		{
-	        		getActivity().getSupportLoaderManager().restartLoader(getLoaderId(), null, GenericListFragment.this);
+	        		LoaderManager.getInstance(getActivity()).restartLoader(getLoaderId(), null,
+							GenericListFragment.this);
 	        		Scribe.note("Filter text was changed!");
 	        		}
 	        	else
@@ -248,7 +249,7 @@ public abstract class GenericListFragment extends ListFragment
 
 		setListAdapter(globalAdapter);
 		
-		getActivity().getSupportLoaderManager().initLoader( getLoaderId(), null, this);
+		LoaderManager.getInstance(getActivity()).initLoader( getLoaderId(), null, this);
 		
 		// http://stackoverflow.com/questions/6732611/long-click-on-listfragment
 		getListView().setOnItemLongClickListener( this );

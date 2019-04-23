@@ -184,15 +184,10 @@ public class TextPaint extends Paint
      */
     public void calculateTextSizeForBox(int width, int height)
         {
-        Log.d("BOX", "BOX");
-
         if ( boxWidth == width && boxHeight== height )
             {
-            Log.d("BOX", "calculateText: already calculated - " + width + "/" + height );
             return;
             }
-
-        Log.d("BOX", "calculateText: RECALCULATING - " + width + "/" + height );
 
         boxWidth = width;
         boxHeight = height;

@@ -75,7 +75,7 @@ public class MonthlyViewerFragment extends Fragment
 
         TextView yearMonthTextView =
                 (TextView) view.findViewById(R.id.year_month_text_view);
-        yearMonthTextView.setText( monthlyViewerData.getYearMonth() );
+        yearMonthTextView.setText( monthlyViewerData.getYearMonthString() );
 
         testView = view.findViewById( R.id.test_view );
 

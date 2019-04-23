@@ -22,8 +22,6 @@ public class BackgroundAndTextView extends BackgroundView
     public BackgroundAndTextView(Context context)
         {
         super(context);
-
-        Log.d("BOX", "constructed");
         }
 
     public BackgroundAndTextView(Context context, AttributeSet attrs)
@@ -55,8 +53,6 @@ public class BackgroundAndTextView extends BackgroundView
     protected void onAttachedToWindow()
         {
         super.onAttachedToWindow();
-
-        Log.d("BOX", "onAttachedToWindow");
 
         if ( textPaint == null )
             {

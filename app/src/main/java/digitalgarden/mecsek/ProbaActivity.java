@@ -35,7 +35,7 @@ public class ProbaActivity extends AppCompatActivity implements LoaderManager.Lo
 
         tvId = (AppCompatTextView) findViewById(R.id.valami);
 
-        getSupportLoaderManager().initLoader( 1, null, this);
+        LoaderManager.getInstance(this).initLoader( 1, null, this);
 
         /*FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener()

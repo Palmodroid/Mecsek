@@ -2,6 +2,7 @@ package digitalgarden.mecsek.diary;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
 import digitalgarden.mecsek.utils.Longtime;
@@ -10,17 +11,15 @@ import digitalgarden.mecsek.utils.Longtime;
  * 1601 - 2999 évek között számol, ez kb 16788 hónap (legalább nem végtelen. Egyébként vehetjük
  * kisebbre, ha más epoch-ot állítunk be.
  */
-public class DiaryAdapter extends FragmentStatePagerAdapter
+public class DiaryAdapter extends FragmentStatePagerAdapter // FragmentStatePagerAdapter
     {
     private static int NUM_MONTHS = 16788;
-    private Longtime today;
+    private long today;
 
-    public DiaryAdapter(FragmentManager fragmentManager, Longtime today)
+    public DiaryAdapter(FragmentManager fragmentManager, long today)
         {
         super(fragmentManager);
         this.today = today;
-
-        today.clearDate();
         }
 
     // Returns total number of pages
@@ -35,7 +34,7 @@ public class DiaryAdapter extends FragmentStatePagerAdapter
     public Fragment getItem(int position)
         {
         // position == montsSinceEpoch
-        return MonthlyViewerFragment.newInstance( position, today.get()); //null;
+        return MonthlyViewerFragment.newInstance( position, today); //null;
         }
 
     // Returns the page title for the top indicator
