@@ -1,16 +1,19 @@
 package digitalgarden.mecsek.diary;
 
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import digitalgarden.mecsek.R;
 
 public class MonthlyViewerFragment extends Fragment
+        implements View.OnClickListener, View.OnLongClickListener
     {
     // Store instance variables
     private long today;
@@ -32,6 +35,8 @@ public class MonthlyViewerFragment extends Fragment
      */
     public static MonthlyViewerFragment newInstance(int monthsSinceEpoch, long today)
         {
+        new Fragment();
+
         MonthlyViewerFragment fragmentFirst = new MonthlyViewerFragment();
         Bundle args = new Bundle();
         args.putInt("MSE", monthsSinceEpoch);
@@ -42,6 +47,7 @@ public class MonthlyViewerFragment extends Fragment
 
         args.putLong("TODAY", today);
         fragmentFirst.setArguments(args);
+
         return fragmentFirst;
         }
 
@@ -56,7 +62,37 @@ public class MonthlyViewerFragment extends Fragment
         }
 
 
-    private TextView testView = null;
+    OnInputReadyListener onInputReadyListener;
+
+    // The container Activity must implement this interface so the frag can deliver messages
+    public interface OnInputReadyListener
+        {
+        public void onReady(ComplexDailyData data);
+        }
+
+    @Override
+    public void onAttach(Context context)
+        {
+        super.onAttach(context);
+
+        try
+            {
+            onInputReadyListener = (OnInputReadyListener) context;
+            }
+        catch (ClassCastException e)
+            {
+            throw new ClassCastException(context.toString() + " must implement " +
+                    "OnInputReadyListener");
+            }
+        }
+
+    @Override
+    public void onDetach()
+        {
+        super.onDetach();
+
+
+        }
 
     // Inflate the view for the fragment based on layout XML
     @Override
@@ -73,12 +109,12 @@ public class MonthlyViewerFragment extends Fragment
         monthlyViewerData = new MonthlyViewerData(this, monthlyViewerLayout,
                 monthsSinceEpoch, today );
 
+        monthlyViewerLayout.setOnClickListener( this );
+        monthlyViewerLayout.setOnLongClickListener( this );
+
         TextView yearMonthTextView =
                 (TextView) view.findViewById(R.id.year_month_text_view);
         yearMonthTextView.setText( monthlyViewerData.getYearMonthString() );
-
-        testView = view.findViewById( R.id.test_view );
-
 
         // Azért került ide, hogy a View már biztosan kész legyen. Párja a másikban.
         monthlyViewerData.createLoader();
@@ -86,6 +122,18 @@ public class MonthlyViewerFragment extends Fragment
         return view;
         }
 
+    @Override
+    public void onClick(View v)
+        {
+        onInputReadyListener.onReady( ((ComplexDailyView)v).getData() );
+        }
+
+    @Override
+    public boolean onLongClick(View v)
+        {
+        onInputReadyListener.onReady( ((ComplexDailyView)v).getData() );
+        return true;
+        }
 
     @Override
     public void onDestroyView()

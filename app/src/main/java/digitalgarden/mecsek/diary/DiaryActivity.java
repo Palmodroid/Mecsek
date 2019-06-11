@@ -3,8 +3,10 @@ package digitalgarden.mecsek.diary;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -12,9 +14,12 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import digitalgarden.mecsek.R;
+import digitalgarden.mecsek.scribe.Scribe;
+import digitalgarden.mecsek.utils.Keyboard;
 import digitalgarden.mecsek.utils.Longtime;
 
 /**
@@ -23,8 +28,11 @@ import digitalgarden.mecsek.utils.Longtime;
  * MonthlyViewerData stores all data on a daily basis.
  */
 public class DiaryActivity extends AppCompatActivity
+        implements MonthlyViewerFragment.OnInputReadyListener
     {
-    FragmentStatePagerAdapter adapterViewPager;
+    FragmentStatePagerAdapter diaryAdapter;
+
+    FrameLayout dailyListFrame;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -49,9 +57,11 @@ public class DiaryActivity extends AppCompatActivity
                 }
             });
 
-        ViewPager vpPager = (ViewPager) findViewById(R.id.content_diary);
-        adapterViewPager = new DiaryAdapter( getSupportFragmentManager(), today.get());
-        vpPager.setAdapter(adapterViewPager);
+        dailyListFrame = findViewById( R.id.daily_list_frame );
+
+        ViewPager vpPager = (ViewPager) findViewById(R.id.view_pager_diary);
+        diaryAdapter = new DiaryAdapter( getSupportFragmentManager(), today.get());
+        vpPager.setAdapter(diaryAdapter);
         vpPager.setCurrentItem( today.monthsSinceEpoch() );
         vpPager.setOffscreenPageLimit(1);
 
@@ -87,6 +97,35 @@ public class DiaryActivity extends AppCompatActivity
         }
 
     @Override
+    protected void onResumeFragments()
+        {
+        Scribe.locus();
+        super.onResumeFragments();
+
+        FragmentManager fragmentManager = getSupportFragmentManager();
+
+        Fragment dailyListFragment = fragmentManager.findFragmentByTag("LIST");
+        if (dailyListFragment == null)
+            {
+/*            dailyListFragment = DailyListFragment.newInstance( );
+
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.add( R.id.daily_list_frame, dailyListFragment, "LIST" );
+            fragmentTransaction.commit();
+
+            // New fragment always starts without keyboard
+            Keyboard.hide( this );
+*/
+            Scribe.debug("New LIST Fragment was created, added");
+            }
+        else
+            {
+            dailyListFrame.setVisibility( View.VISIBLE );
+            Scribe.debug("Old LIST Fragment was found");
+            }
+        }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu)
         {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -111,4 +150,56 @@ public class DiaryActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
         }
 
+    @Override
+    public void onReady(ComplexDailyData data)
+        {
+        dailyListFrame.setVisibility( View.VISIBLE );
+
+        FragmentManager fragmentManager = getSupportFragmentManager();
+
+        Fragment dailyListFragment = fragmentManager.findFragmentByTag("LIST");
+        if (dailyListFragment == null)
+            {
+            dailyListFragment = DailyListFragment.newInstance( );
+
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.add( R.id.daily_list_frame, dailyListFragment, "LIST" );
+            fragmentTransaction.commit();
+
+            // New fragment always starts without keyboard
+            Keyboard.hide( this );
+
+            Scribe.debug("New LIST Fragment was created, added");
+            }
+        else
+            {
+            Scribe.debug("Old LIST Fragment was found");
+            }
+
+        Toast.makeText( this, "SHORT CLICK: " + data.getDayOfMonth(), Toast.LENGTH_SHORT).show();
+        }
+
+    @Override
+    public void onBackPressed()
+        {
+        dailyListFrame.setVisibility( View.GONE );
+        Fragment dailyListFragment = getSupportFragmentManager().findFragmentByTag("LIST");
+        if (dailyListFragment != null)
+            {
+            FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+            fragmentTransaction.remove( dailyListFragment );
+            fragmentTransaction.commit();
+
+            // New fragment always starts without keyboard
+            Keyboard.hide( this );
+
+            Scribe.debug("New LIST Fragment was created, added");
+            }
+        else
+            {
+            super.onBackPressed();
+            Scribe.debug("Old LIST Fragment was found");
+            }
+
+        }
     }

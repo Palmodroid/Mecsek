@@ -370,6 +370,42 @@ public class Longtime
         return day - 31;
         }
 
+    // http://howardhinnant.github.io/date_algorithms.html
+    public int cililToDays()
+        {
+        int y = part[YEAR];
+        int m = part[MONTH];
+        int d = part[DAY];
+
+        if (m <= 2) y--;
+        int era = (y >= 0 ? y : y-399) / 400;
+        int yoe = y - era * 400;                             // [0, 399]
+        int doy = (153*(m + (m > 2 ? -3 : 9)) + 2)/5 + d-1;  // [0, 365]
+        int doe = yoe * 365 + yoe/4 - yoe/100 + doy;         // [0, 146096]
+        return era * 146097 + doe - 719468;
+        }
+
+    // http://howardhinnant.github.io/date_algorithms.html
+    public void setDaysToCivil(int z)
+        {
+        z += 719468;
+        int era = (z >= 0 ? z : z - 146096) / 146097;
+        int doe = z - era * 146097;                                 // [0, 146096]
+        int yoe = (doe - doe/1460 + doe/36524 - doe/146096) / 365;  // [0, 399]
+        int y = (yoe) + era * 400;
+        int doy = doe - (365*yoe + yoe/4 - yoe/100);                // [0, 365]
+        int mp = (5*doy + 2)/153;                                   // [0, 11]
+        int d = doy - (153*mp+2)/5 + 1;                             // [1, 31]
+        int m = mp + (mp < 10 ? 3 : -9);                            // [1, 12]
+
+        part[YEAR] = m <= 2 ? y+1 : y;
+        part[MONTH] = m;
+        part[DAY] = d;
+        }
+
+
+
+
     public int monthsSinceEpoch()
         {
         // Epoch 1601.01.01 - Csak 400-zal osztható év utáni lehet !!

@@ -68,10 +68,35 @@ public abstract class CheckedLayout extends ViewGroup
 
     public void init()
         {
-
         }
 
-    public abstract View getChildView( int row, int col );
+    /*
+     * OnClickListener should check childviews
+     */
+    @Override
+    public void setOnClickListener(View.OnClickListener listener )
+        {
+        // super.setOnClickListener(l);
+        for (int index = 0; index < getChildCount(); index++)
+            {
+            getChildAt( index ).setOnClickListener( listener );
+            }
+        }
+
+    /*
+     * OnLongClickListener should check childviews
+     */
+    @Override
+    public void setOnLongClickListener( View.OnLongClickListener listener )
+        {
+        // super.setOnLongClickListener(l);
+        for (int index = 0; index < getChildCount(); index++)
+            {
+            getChildAt( index ).setOnLongClickListener( listener );
+            }
+        }
+
+    public abstract View getChildView(int row, int col );
 
     /**
      * Return child view at the specified row and column coordinate pair.

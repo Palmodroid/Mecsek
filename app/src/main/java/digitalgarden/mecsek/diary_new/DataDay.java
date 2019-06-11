@@ -1,36 +1,21 @@
-package digitalgarden.mecsek.diary;
+package digitalgarden.mecsek.diary_new;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import digitalgarden.mecsek.utils.Longtime;
 
-
-public class ComplexDailyData
+/**
+ * DataDay stores all data for one day.
+ * The list of the entries is filled during load, but when loaded, will be ready for showing
+ */
+public class DataDay
     {
-    public class EntryData
-        {
-        private final Longtime date;
-        private final String note;
+    // List for loading data
+    private List<DataEntry> dataEntryListToLoad = new ArrayList<>();
 
-        public EntryData(Longtime date, String note)
-            {
-            this.date = date;
-            this.note = note;
-            }
-
-        public String getNote()
-            {
-            return note;
-            }
-        public long getDate() { return date.get(); }
-        }
-
-    // List of loading data
-    private List<EntryData> entryDataListToLoad = new ArrayList<>();
-
-    // List of data to show (loaded data is be moved here after loading finished)
-    private List<EntryData> entryDataListToUse = null;
+    // List for data to show (loaded data is be moved here after loading finished)
+    private List<DataEntry> dataEntryListToUse = null;
 
     // Day of the month as string (to show as header)
     private String dayOfMonth;
@@ -46,7 +31,7 @@ public class ComplexDailyData
      * @param month month of this monthly view
      * @param today datestamp of today, comes from DiaryActivity without timeinfo
      */
-    public ComplexDailyData(Longtime longtime, int month, long today)
+    public DataDay(Longtime longtime, int month, long today)
         {
         dayOfMonth = longtime.toStringDayOfMonth();
 
@@ -73,20 +58,20 @@ public class ComplexDailyData
         return 0xFFAD6519;
         }
 
-    public void addEntryData( Longtime date, String note )
+    public void addEntryData(long id, Longtime date, String note )
         {
-        entryDataListToLoad.add( new EntryData(date,note));
+        dataEntryListToLoad.add( new DataEntry(id, note, date));
         }
 
     public void onLoadFinished()
         {
-        entryDataListToUse = entryDataListToLoad;
-        entryDataListToLoad = new ArrayList<>();
+        dataEntryListToUse = dataEntryListToLoad;
+        dataEntryListToLoad = new ArrayList<>();
         }
 
-    public List<EntryData> getEntryDataList()
+    public List<DataEntry> getEntryDataList()
         {
-        return entryDataListToUse;
+        return dataEntryListToUse;
         }
 
     public String getDayOfMonth()
@@ -98,4 +83,5 @@ public class ComplexDailyData
         {
         return dayColor;
         }
+
     }

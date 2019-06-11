@@ -52,7 +52,6 @@ public class MonthlyViewerLayout extends CheckedLayout
         return childView;
         }
 
-
     // https://medium.com/square-corner-blog/android-leak-pattern-subscriptions-in-views-18f0860aa74c
     @Override
     protected void onAttachedToWindow()

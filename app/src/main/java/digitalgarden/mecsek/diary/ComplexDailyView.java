@@ -22,7 +22,7 @@ import static digitalgarden.mecsek.viewutils.TextPaint.millis;
  * setDayPaint() - paint used for day of the month
  * setDayOfMonth() - sets only day of the month
  */
-public class ComplexDailyView extends BackgroundView implements View.OnClickListener
+public class ComplexDailyView extends BackgroundView
     {
     // text paint to draw text with
     private TextPaint dayPaint;
@@ -75,6 +75,11 @@ public class ComplexDailyView extends BackgroundView implements View.OnClickList
         this.complexDailyData = complexDailyData;
         }
 
+    public ComplexDailyData getData()
+        {
+        return this.complexDailyData;
+        }
+
     public void setDayPaint(TextPaint dayPaint)
         {
         this.dayPaint = dayPaint;
@@ -116,14 +121,6 @@ public class ComplexDailyView extends BackgroundView implements View.OnClickList
 
         // bitmap = BitmapFactory.decodeResource( getContext().getResources(),
         //        R.drawable.smallballoons);
-
-        setOnClickListener( this );
-        }
-
-    @Override
-    public void onClick(View v)
-        {
-        Toast.makeText( getContext(), complexDailyData.getDayOfMonth(), Toast.LENGTH_SHORT).show();
         }
 
     @Override

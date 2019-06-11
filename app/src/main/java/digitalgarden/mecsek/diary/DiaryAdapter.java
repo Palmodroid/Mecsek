@@ -1,10 +1,13 @@
 package digitalgarden.mecsek.diary;
 
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.view.ViewGroup;
 
+import digitalgarden.mecsek.scribe.Scribe;
 import digitalgarden.mecsek.utils.Longtime;
 
 /**
@@ -16,10 +19,14 @@ public class DiaryAdapter extends FragmentStatePagerAdapter // FragmentStatePage
     private static int NUM_MONTHS = 16788;
     private long today;
 
+FragmentManager fm;
+
+
     public DiaryAdapter(FragmentManager fragmentManager, long today)
         {
         super(fragmentManager);
         this.today = today;
+fm = fragmentManager;
         }
 
     // Returns total number of pages
@@ -44,4 +51,17 @@ public class DiaryAdapter extends FragmentStatePagerAdapter // FragmentStatePage
         return (1601 + (position / 12)) + "." + (position % 12 + 1);
         }
 
+
+    @Override
+    public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object)
+        {
+        super.destroyItem(container, position, object);
+
+for ( Fragment f : fm.getFragments())
+    {
+    Scribe.debug("Fragment: " + f.getTag());
+    }
+
+        Scribe.debug("Item destroyed: " + position);
+        }
     }
