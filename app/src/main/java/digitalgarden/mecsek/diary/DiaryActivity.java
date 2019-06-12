@@ -123,6 +123,24 @@ public class DiaryActivity extends AppCompatActivity
             dailyListFrame.setVisibility( View.VISIBLE );
             Scribe.debug("Old LIST Fragment was found");
             }
+
+
+        Longtime lt = new Longtime();
+        int n= 0;
+        for ( n= 1900; n< 2101; n++)
+            {
+            lt.set(n, 1, 1);
+            if (lt.isLeapYear())
+                {
+                Scribe.debug("YEAR: " + lt.toString() + " LEAP: " + lt.isLeapYear());
+                }
+            }
+
+
+
+
+
+
         }
 
     @Override

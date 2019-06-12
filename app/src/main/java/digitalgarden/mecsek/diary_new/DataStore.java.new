@@ -3,8 +3,6 @@ package digitalgarden.mecsek.diary_new;
 
 import java.util.List;
 
-import digitalgarden.mecsek.diary.DataMonthlyView;
-
 /**
  * DataStore organizes data for diary.
  * DataMonthlyViewer contains(6x7 = 42 days), and it loads calendar data for its each day.

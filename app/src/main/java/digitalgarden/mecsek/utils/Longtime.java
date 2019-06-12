@@ -4,16 +4,51 @@ import java.util.Calendar;
 
 
 /**
- * Egy időpontot long értéken tárol (sqlite számára)
- * Az időpontot kevert számrendszerben tárolja,
- * - a pontosággal együtt
- * - sorrend megtartásával
+ * Timestamp
+ * Timestamp is stored as
+ * - long (used by sqlite)
+ * - different "time"-parts as YEAR MONTH DAY (DAY_NAME) HOUR MIN SEC and MILL
+ * Set... methods always set both data, they are always synchronized.
+ *
+ * IMPORTANT!! HOW TO SET TIME?
+ * Set - as long - no error check is performed!
+ * ALWAYS SET! auto - always false
+ * ALWAYS CALL! convertLong2Parts() - (no error check) - error is always set to false
+ *
+ * Set (or modify) parts
+ * ALWAYS SET! auto - set if any value is set automatically (ex. from calendar)
+ * ALWAYS CALL! convertParts2Long() - calls checkParts() - error is set,
+ * if time value is invalid - (zeroAbove() is called on and above invalid part)
+ *
+ * Set methods (mostly) return true if error OR auto is set.
+ * isAuto() and isError() can help to decide
+ * ?? returning first part where auto or error was set ??
  */
 
 public class Longtime
     {
-    // Ha bármelyik megegyezik range (vagy nagyobb),
-    // Akkor a további részek nem számítanak
+    /** Timestamp as long - currently 0L (is it ok??) means - no time is set */
+    private long time = 0L;
+
+    /** Timestamp divided into parts as YEAR MONTH DAY (DAY_NAME) HOUR MIN SEC and MILL */
+    private int[] part = new int[TIME_PARTS];
+
+    /** START value means, that this (and more precise) parts are NOT given */
+    private static final int[] START =
+            {1600, 0, 0, -1, -1, -1, -1, -1};
+
+    /** RANGE (including START and EXTRA values) - available range for this part */
+    private static final int[] RANGE =
+            {1400, 14, 33, 8, 25, 61, 61, 1001};
+    // Example: MONTH - range 14: 0 - month is not given 1-12 valid months 13 "next" month
+
+    /** EXTRA (included in RANGE!!) data for this part, such as "next" */
+    private static final int[] EXTRA =
+            {0, 1, 1, 0, 0, 0, 0, 0};
+
+    /** Where to split century if only two digits are given as year */
+    private static int TWO_DIGIT_YEAR_START = Calendar.getInstance().get(Calendar.YEAR) - 80;
+
     public static final int YEAR = 0;      // 1601 - 2999
     public static final int MONTH = 1;     // 1 - 12 13 - next month
     public static final int DAY = 2;       // 1 - 31 32 - next day
@@ -34,98 +69,83 @@ public class Longtime
             {"január", "február", "március", "április", "május", "június",
                     "július", "augusztus", "szeptember", "október", "november", "december", "NEXT MONTH"};
 
-    private static final int[] range =
-            {1400, 14, 33, 8, 25, 61, 61, 1001};
-
-    // AZ "extra" is benne van a "range"-ben, de ellenőrzéskor nem engedi használni.
-    // Ez arra szolgál, hogy megtaláljuk pl. az egy hónaphoz tartozó elmeket, mert így mindig van egy nagyobb
-
-    private static final int[] extra =
-            {0, 1, 1, 0, 0, 0, 0, 0};
-    private static final int[] start =
-            {1600, 0, 0, -1, -1, -1, -1, -1};
-
-    private int[] part = new int[TIME_PARTS];
-
-    /**
-     * az idő long formában - 0L, ha nincs megadva időpont
-     */
-    private long time = 0L;
-
-    private static int TWO_DIGIT_YEAR_START = Calendar.getInstance().get(Calendar.YEAR) - 80;
-
-    /**
-     * checkParts() ellenőrzése után áll be, true, ha valamelyik időérték invalid
-     */
+    /** checkParts() sets it true if any of the time-values is invalid */
     private boolean error = false;
 
-    /**
-     * String parsing után áll be, true, ha autoimatikus kitöltés történt
-     */
+    /** Parsing sets it true if any of the time-values is set automatically */
     private boolean auto = false;
 
-
+    /** Constructor without setting any value */
     public Longtime()
         {
+        // all parts are 0 - '0' YEAR means - no YEAR is set
         }
 
+    /** Constructor set longtime by long value */
     public Longtime(long time)
         {
         set(time);
         }
 
-
+    /** Returns duplicate of this longtime */
     public Longtime duplicate()
         {
         return new Longtime( time );
         }
 
+    /** Returns longtime as long */
     public long get()
         {
         return time;
         }
 
-    // NINCS ELLENŐRZÉS!!! - NEM KELLENE?
+    /**
+     * Returns the given part
+     * @param part constants as YEAR MONTH DAY (DAY_NAME) HOUR MIN SEC and MILL
+     * @return value of the asked part
+     */
     public int get( int part )
         {
         return this.part[ part ];
         }
-    
+
+    /** TRUE if error was set during the last set method */
     public boolean isError()
         {
         return error;
         }
 
+    /** TRUE if any value was set automatically during the last set method */
     public boolean isAuto()
         {
         return auto;
         }
 
-
+    /** Sets longtime as long - Value is NOT CHECKED !! */
     public void set(long time)
         {
-        // long esetében nincs ellenőrzés
+        // long is not checked !!
 
         this.time = time;
         auto = false;
         convertLong2Parts();
         }
 
-
+    /** Sets parts as ints. Missing values set to zero */
     public boolean set(int... parts)
         {
-        int n, size;
+        int size;
 
         if (parts.length < part.length)
             size = parts.length;
         else
             size = part.length;
 
+        int n;
         for (n = 0; n < size; n++)
             {
             part[n] = parts[n];
             }
-
         zeroAbove(n);
 
         auto = false;
@@ -133,7 +153,7 @@ public class Longtime
         return error;
         }
 
-
+    /** Set current timstamp */
     public void set() // Timestamp
         {
         Calendar now = Calendar.getInstance();
@@ -155,7 +175,7 @@ public class Longtime
         convertParts2Long();
         }
 
-
+    /** Parses date (only YEAR, MONTH and DAY as integers) from String */
     public boolean setDate(String string, int twoDigitYearStart)
         {
         int[] ints = Utils.splitInts(string);
@@ -210,66 +230,69 @@ public class Longtime
         return error || auto;
         }
 
-
+    /** Parses date (only YEAR, MONTH and DAY as integers) from String */
     public boolean setDate(String string)
         {
         return setDate(string, TWO_DIGIT_YEAR_START);
         }
 
-
+    /** Changes ONLY DAY part */
     public boolean setDayOfMonth(int dayOfMonth)
         {
-        if (part[MONTH] > 0 && dayOfMonth > 0 && dayOfMonth < lengthOfMonth() )
-            {
-            part[DAY] = dayOfMonth;
-            }
+        // NOT NEEDED, check will do the job
+        // if (part[MONTH] > 0 && dayOfMonth > 0 && dayOfMonth < lengthOfMonth() )
+
+        part[DAY] = dayOfMonth;
+
+        auto = false;
         convertParts2Long();
         return error;
         }
 
+    /** Clears all value on and above index-part */
     private void zeroAbove(int index)
         {
         for (int n = index; n < part.length; n++)
             {
-            part[n] = start[n];
+            part[n] = START[n];
             }
+        auto = false;
+        convertParts2Long();
         }
 
-    public boolean clearDate()
+
+    /** Clears TIME-PARTS - HOUR MIN SEC and MILL */
+    public void clearDate()
         {
         zeroAbove( HOUR );
-        convertParts2Long();
-
-        return error;
         }
 
+
+    /** Checks parts, and then converts them to long value */
     private void convertParts2Long()
         {
         checkParts();
-
         time = 0L;
         for (int n = 0; n < TIME_PARTS; n++)
             {
-            time *= range[n];
-            time += (part[n] - start[n]);
-
+            time *= RANGE[n];
+            time += (part[n] - START[n]);
             // Scribe.debug("Time: " + time);
             }
         }
 
-
+    /** Converts long value to different date- and time-parts - NO CHECK IS PERFORMED !! */
     private void convertLong2Parts()
         {
+        error = false; // megegyezés alapján nincs check
         long time = this.time;
 
         for (int n = TIME_PARTS - 1; n >= 0; n--)
             {
-            part[n] = (int) (time % range[n]) + start[n];
-            time /= range[n];
-
+            part[n] = (int) (time % RANGE[n]) + START[n];
+            time /= RANGE[n];
             // Scribe.debug("Time: " + time );
             }
-        error = false; // megegyezés alapján nincs check
         }
 
     /**
@@ -292,11 +315,11 @@ public class Longtime
             {
             if (zero)
                 {
-                if (part[n] > start[n])
+                if (part[n] > START[n])
                     {
                     error = true;
                     }
-                part[n] = start[n];
+                part[n] = START[n];
                 }
             else // non-zero
                 {
@@ -304,17 +327,17 @@ public class Longtime
                     {
                     part[n] = dayName();
                     }
-                else if (part[n] <= start[n])  // most válik zero-vá, ez nem hiba
+                else if (part[n] <= START[n])  // most válik zero-vá, ez nem hiba
                     {
                     zero = true;
-                    part[n] = start[n];
+                    part[n] = START[n];
                     }
                 else if ((n == DAY && part[n] > lengthOfMonth())
-                        || part[n] > range[n] - extra[n] + start[n] - 1) // túl nagy
+                        || part[n] > RANGE[n] - EXTRA[n] + START[n] - 1) // túl nagy
                     {
                     error = true;
                     zero = true;
-                    part[n] = start[n];
+                    part[n] = START[n];
                     }
                 }
             }
@@ -322,14 +345,14 @@ public class Longtime
         return error;
         }
 
-
-    // 4-gyel osztható, kivéve, ha 100-zal osztható, de mégis, ha 400-zal osztható
-    private boolean isLeapYear()
+    /** TRUE if leap-year
+     * (4-gyel osztható, kivéve, ha 100-zal osztható, de mégis, ha 400-zal osztható) */
+    public boolean isLeapYear()
         {
         return part[YEAR] % 400 == 0 || part[YEAR] % 100 != 0 && part[YEAR] % 4 == 0;
         }
 
-
+    /** Returns length of this month */
     private int lengthOfMonth()
         {
         if (part[MONTH] == 2)
@@ -470,6 +493,7 @@ public class Longtime
             part[DAY]+= lengthOfMonth();
             }
 
+        auto = false;
         convertParts2Long();
         return error;
         }
@@ -484,11 +508,11 @@ public class Longtime
         {
         StringBuilder builder = new StringBuilder( 24 );
 
-        if ( part[YEAR] > start[YEAR] )
+        if ( part[YEAR] > START[YEAR] )
             {
             builder.append(part[YEAR]).append('.');
 
-            if (part[MONTH] > start[MONTH])
+            if (part[MONTH] > START[MONTH])
                 {
                 builder.append(Integer.toString(part[MONTH] + 100).substring(1)).append('.');
 
@@ -497,28 +521,28 @@ public class Longtime
                     builder.append(" (").append( monthString[part[MONTH]-1]).append(") ");
                     }
 
-                if (part[DAY] > start[DAY])
+                if (part[DAY] > START[DAY])
                     {
                     builder.append(Integer.toString(part[DAY] + 100).substring(1)).append('.');
 
-                    if (isTextEnabled && part[DAY_NAME] > start[DAY_NAME])
+                    if (isTextEnabled && part[DAY_NAME] > START[DAY_NAME])
                         {
                         builder.append(' ').append(dayString[part[DAY_NAME]]);
                         }
 
-                    if (part[HOUR] > start[HOUR])
+                    if (part[HOUR] > START[HOUR])
                         {
                         builder.append(' ').append(Integer.toString(part[HOUR] + 100).substring(1));
 
-                        if (part[MIN] > start[MIN])
+                        if (part[MIN] > START[MIN])
                             {
                             builder.append(':').append(Integer.toString(part[MIN] + 100).substring(1));
 
-                            if (part[SEC] > start[SEC])
+                            if (part[SEC] > START[SEC])
                                 {
                                 builder.append(':').append(Integer.toString(part[SEC] + 100).substring(1));
 
-                                if (part[MILL] > start[MILL])
+                                if (part[MILL] > START[MILL])
                                     {
                                     builder.append('.').append(Integer.toString(part[MILL] + 1000).substring(1));
                                     }
@@ -535,11 +559,11 @@ public class Longtime
         {
         StringBuilder builder = new StringBuilder( 24 );
 
-        if ( part[YEAR] > start[YEAR] )
+        if ( part[YEAR] > START[YEAR] )
             {
             builder.append(part[YEAR]).append('.');
 
-            if (part[MONTH] > start[MONTH])
+            if (part[MONTH] > START[MONTH])
                 {
                 builder.append(Integer.toString(part[MONTH] + 100).substring(1)).append('.');
 

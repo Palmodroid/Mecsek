@@ -10,6 +10,8 @@ import android.view.MenuItem;
 import android.view.View;
 
 import digitalgarden.mecsek.permission.PermissionRequestDialog;
+import digitalgarden.mecsek.scribe.Scribe;
+import digitalgarden.mecsek.utils.Longtime;
 
 import static digitalgarden.mecsek.Debug.initScribe;
 
