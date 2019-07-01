@@ -17,12 +17,14 @@ import digitalgarden.mecsek.database.calendar.CalendarControllActivity;
 import digitalgarden.mecsek.database.medications.MedicationsControllActivity;
 import digitalgarden.mecsek.database.patients.PatientsControllActivity;
 import digitalgarden.mecsek.database.pills.PillsControllActivity;
+import digitalgarden.mecsek.diary_new.DiaryActivityNew;
 import digitalgarden.mecsek.exportimport.AsyncTaskDialogFragment;
 import digitalgarden.mecsek.diary.DiaryActivity;
 import digitalgarden.mecsek.permission.PermissionRequestDialog;
 import digitalgarden.mecsek.scribe.Scribe;
 import digitalgarden.mecsek.selectfile.SelectFileActivity;
 import digitalgarden.mecsek.selectfile.SelectFileActivity.Mode;
+import digitalgarden.mecsek.utils.Longtime;
 
 import static digitalgarden.mecsek.Debug.initScribe;
 import static digitalgarden.mecsek.MainChooserDialogFragment.Type.CONFIRM_IMPORT;
@@ -34,9 +36,94 @@ public class MainChooserActivity extends FragmentActivity implements PermissionR
 	{
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
-		{
-		super.onCreate(savedInstanceState);
-		
+        {
+        super.onCreate(savedInstanceState);
+
+        // Longtime longtime = new Longtime();
+
+        /*
+        for ( int y = 1970; y < 2020; y++ )
+            {
+            longtime.set( y, 1, 1 );
+
+            int di = longtime.getDayIndex();
+            int mi = longtime.getMonthIndex();
+            int dn = longtime.getDayName();
+
+            Scribe.debug("LONGTIME : " + longtime.toString(true) +
+                    " dayIndex: " + di +
+                    " monthIndex: " + mi +
+                    " day name: " + dn + ( dn == 0 ? "<!!!!!!!!!!!!" : ""));
+            }
+        */
+
+        /*
+        longtime.set(2000, 3, 17);
+
+        int di = longtime.getDayIndex();
+        int mi = longtime.getMonthIndex();
+
+        Scribe.debug("LONGTIME : " + longtime.toString(true) +
+                " dayIndex: " + di +
+                " monthIndex: " + mi);
+
+        longtime.setDayIndex( di );
+        Scribe.debug("LONGTIME from DI: " + longtime.toString(true));
+
+        longtime.setMonthIndex( mi );
+        Scribe.debug("LONGTIME from MI: " + longtime.toString(true));
+        */
+
+        /*
+        longtime.set(1970, 1, 1);
+        boolean error = false;
+        for (int n = 0; n < 500; n++)
+            {
+            Scribe.debug("LONGTIME : " + longtime.toString(true) +
+                    " leap1: " + longtime.isLeapYear() +
+                    " leap2: " + longtime.isLeapYear2());
+
+            if ( longtime.isLeapYear() != longtime.isLeapYear2() )
+                {
+                error = true;
+                break;
+                }
+
+            longtime.addDays( 365 );
+            }
+
+        if ( error )
+            Scribe.debug("LONGTIME : LEAPYEAR ERROR !!" );
+
+        else
+            Scribe.debug("LONGTIME : LEAPYEAR O.K. !!" );
+        */
+
+        /*
+        longtime.set(1970, 1, 1);
+        Scribe.debug("LONGTIME: " + longtime.toString(true) +
+                " index: " + longtime.getDayIndex() );
+
+        for (int n = 0; n < 80000; n++)
+            {
+            longtime.addDays(1);
+
+            if (longtime.daysSinceEpoch() - 134774 != longtime.getDayIndex())
+                {
+                Scribe.debug("LONGTIME ERROR: " + longtime.toString(true) +
+                        " epoch: " + longtime.daysSinceEpoch() +
+                        " index: " + longtime.getDayIndex());
+
+                break;
+                }
+            }
+
+        Scribe.debug( "LONGTIME READY: " + longtime.toString(true) +
+                " epoch: " + longtime.daysSinceEpoch() +
+                " index: " + longtime.getDayIndex() );
+        */
+
+
         PermissionRequestDialog permissionRequestDialog =
                 (PermissionRequestDialog)getFragmentManager().findFragmentByTag("dialog");
         if ( permissionRequestDialog == null )
@@ -49,6 +136,7 @@ public class MainChooserActivity extends FragmentActivity implements PermissionR
             }
 
 		}
+
 
     @Override
     public void onPermissionRequestFinish(boolean permissionsGranted)
@@ -146,7 +234,7 @@ public class MainChooserActivity extends FragmentActivity implements PermissionR
 
 					Intent i = new Intent();
 
-					i.setClass(MainChooserActivity.this, DiaryActivity.class);
+					i.setClass(MainChooserActivity.this, DiaryActivityNew.class);
 					startActivity(i);
 					}
 				});

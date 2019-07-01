@@ -25,7 +25,7 @@ public class MonthlyViewerFragment extends Fragment
      * newInstance constructor for creating fragment with arguments
      * @param monthsSinceEpoch
      * 
-     * sets actual month as monthsSinceEpoch, which is equal the position in the MSEViewer
+     * sets actual month as getMonthIndex, which is equal the position in the MSEViewer
      * 
      * @param today
      * 
@@ -35,14 +35,12 @@ public class MonthlyViewerFragment extends Fragment
      */
     public static MonthlyViewerFragment newInstance(int monthsSinceEpoch, long today)
         {
-        new Fragment();
-
         MonthlyViewerFragment fragmentFirst = new MonthlyViewerFragment();
         Bundle args = new Bundle();
         args.putInt("MSE", monthsSinceEpoch);
 
         // Longtime lt = new Longtime();
-        // lt.setYearMonth( monthsSinceEpoch );
+        // lt.setMonthIndex( getMonthIndex );
         // Log.d("TODAY", "Fragments month: " + lt.toString());
 
         args.putLong("TODAY", today);

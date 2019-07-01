@@ -18,7 +18,7 @@ import java.util.Calendar;
  * Set (or modify) parts
  * ALWAYS SET! auto - set if any value is set automatically (ex. from calendar)
  * ALWAYS CALL! convertParts2Long() - calls checkParts() - error is set,
- * if time value is invalid - (zeroAbove() is called on and above invalid part)
+ * if time value is invalid - (clearAbove() is called on and above invalid part)
  *
  * Set methods (mostly) return true if error OR auto is set.
  * isAuto() and isError() can help to decide
@@ -146,7 +146,7 @@ public class Longtime
             {
             part[n] = parts[n];
             }
-        zeroAbove(n);
+        clearAbove(n);
 
         auto = false;
         convertParts2Long();
@@ -224,7 +224,7 @@ public class Longtime
                 }
             }
 
-        zeroAbove(DAY_NAME);
+        clearAbove(DAY_NAME);
 
         convertParts2Long();
         return error || auto;
@@ -250,7 +250,7 @@ public class Longtime
         }
 
     /** Clears all value on and above index-part */
-    private void zeroAbove(int index)
+    private void clearAbove(int index)
         {
         for (int n = index; n < part.length; n++)
             {
@@ -264,7 +264,7 @@ public class Longtime
     /** Clears TIME-PARTS - HOUR MIN SEC and MILL */
     public void clearDate()
         {
-        zeroAbove( HOUR );
+        clearAbove( HOUR );
         }
 
 
@@ -346,8 +346,28 @@ public class Longtime
         }
 
     /** TRUE if leap-year
-     * (4-gyel osztható, kivéve, ha 100-zal osztható, de mégis, ha 400-zal osztható) */
+     *  (4-gyel osztható, kivéve, ha 100-zal osztható, de mégis, ha 400-zal osztható)
+     *
+     *  non-leap-year
+     *  (nem osztható néggyel,
+     *   a néggyel oszthatók közül a százzal oszthatók, de a 400-zal osztható nem)
+     **/
     public boolean isLeapYear()
+        {
+        return !(part[YEAR] % 4 != 0 || (part[YEAR] % 100 == 0 && part[YEAR] % 400 != 0));
+
+        /*
+        if (part[YEAR] % 4 != 0) // 4-gyel NEM osztható -> nem leap
+            return false;
+
+        if (part[YEAR] % 100 != 0) // 4-gyel osztható, de százzal NEM osztható -> leap
+            return true;
+
+        return part[YEAR] % 400 == 0; // (4-gyel), 100-zal osztható - ha 400-zal, akkor -> leap
+        */
+        }
+
+    public boolean isLeapYear2()
         {
         return part[YEAR] % 400 == 0 || part[YEAR] % 100 != 0 && part[YEAR] % 4 == 0;
         }
@@ -360,8 +380,7 @@ public class Longtime
         return part[MONTH] <= 7 ? 30 + part[MONTH] % 2 : 31 - part[MONTH] % 2;
         }
 
-
-    public int daysSinceEpoch()
+    /* public int daysSinceEpoch()
         {
         // Epoch 1601.01.01 - Csak 400-zal osztható év utáni lehet !!
         // És ez pont hétfő! 2001 is.
@@ -391,10 +410,11 @@ public class Longtime
         day += year * 365 + year / 4 - year / 100 + year / 400;
 
         return day - 31;
-        }
+        } */
 
     // http://howardhinnant.github.io/date_algorithms.html
-    public int cililToDays()
+    // Index 0 starts at 1973.01.01
+    public int getDayIndex()
         {
         int y = part[YEAR];
         int m = part[MONTH];
@@ -405,15 +425,16 @@ public class Longtime
         int yoe = y - era * 400;                             // [0, 399]
         int doy = (153*(m + (m > 2 ? -3 : 9)) + 2)/5 + d-1;  // [0, 365]
         int doe = yoe * 365 + yoe/4 - yoe/100 + doy;         // [0, 146096]
-        return era * 146097 + doe - 719468;
+        return era * 146097 + doe - 719468 - 1096; // // 1096 = 1973.01.01. 3652 == 1980.01.01
         }
 
     // http://howardhinnant.github.io/date_algorithms.html
-    public void setDaysToCivil(int z)
+    // Index 0 starts at 1973.01.01
+    public boolean setDayIndex(int dayIndex)
         {
-        z += 719468;
-        int era = (z >= 0 ? z : z - 146096) / 146097;
-        int doe = z - era * 146097;                                 // [0, 146096]
+        dayIndex += 719468 + 1096; // 1096 = 1973.01.01. 3652 == 1980.01.01
+        int era = (dayIndex >= 0 ? dayIndex : dayIndex - 146096) / 146097;
+        int doe = dayIndex - era * 146097;                          // [0, 146096]
         int yoe = (doe - doe/1460 + doe/36524 - doe/146096) / 365;  // [0, 399]
         int y = (yoe) + era * 400;
         int doy = doe - (365*yoe + yoe/4 - yoe/100);                // [0, 365]
@@ -424,12 +445,16 @@ public class Longtime
         part[YEAR] = m <= 2 ? y+1 : y;
         part[MONTH] = m;
         part[DAY] = d;
+
+        clearAbove( HOUR );
+        convertParts2Long();
+
+        return error;
         }
 
-
-
-
-    public int monthsSinceEpoch()
+    // Index 0 starts at 1973.01.01
+    // !! Negative monthIndex is not working yet !!
+    public int getMonthIndex()
         {
         // Epoch 1601.01.01 - Csak 400-zal osztható év utáni lehet !!
         // És ez pont hétfő! 2001 is.
@@ -438,26 +463,29 @@ public class Longtime
         int year = part[YEAR];
         int month = part[MONTH];
 
-        year -= 1601;
+        year -= 1973; // 1601;
         month --;
 
-        return year * 12 + month;
+        return year * 12 + month; // - 4548 == 1980.01.01
         }
 
-    public boolean setYearMonth( int monthsSinceEpoch)
+    // Index 0 starts at 1973.01.01
+    // !! Negative monthIndex is not working yet !!
+    public boolean setMonthIndex(int monthIndex)
         {
-        part[YEAR] = monthsSinceEpoch / 12 + 1601;
-        part[MONTH] = monthsSinceEpoch % 12 + 1;
+        part[YEAR] = monthIndex / 12 + 1973; //1601;
+        part[MONTH] = monthIndex % 12 + 1;
 
-        zeroAbove( DAY );
+        clearAbove( DAY );
         convertParts2Long();
 
         return error;
         }
 
+    // Index 0 starts at 1973.01.01 which is monday
     private int dayName()
         {
-        return daysSinceEpoch() % 7;
+        return getDayIndex() % 7;
         }
 
     public int getDayName()

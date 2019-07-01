@@ -63,7 +63,7 @@ public class MonthlyViewerData implements LoaderManager.LoaderCallbacks<Cursor>
 
         // START DAY of this monthly view - FIRST DAY of the month is set first
         longtimeStart = new Longtime();
-        longtimeStart.setYearMonth( monthsSinceEpoch );
+        longtimeStart.setMonthIndex( monthsSinceEpoch );
         longtimeStart.setDayOfMonth(1);
         // YEAR MONTH and DAY (DAY_NAME) is set, but TIME is not
 
@@ -73,7 +73,7 @@ public class MonthlyViewerData implements LoaderManager.LoaderCallbacks<Cursor>
 
         // Roll back to START DAY
         longtimeStart.addDays( -longtimeStart.getDayName() );
-        daysSinceEpochForStart = longtimeStart.daysSinceEpoch();
+        daysSinceEpochForStart = longtimeStart.getDayIndex();
 
         // ENDING DAY - FIRST DAY OF THE NEXT MONTH
         longtimeEnd = longtimeStart.duplicate();
@@ -154,7 +154,7 @@ public class MonthlyViewerData implements LoaderManager.LoaderCallbacks<Cursor>
         // if ( cursor.isClosed() )
         //    {
         //    LoaderManager.getInstance(monthlyViewerFragment.getActivity()).
-        //            restartLoader(monthsSinceEpoch, null, this);
+        //            restartLoader(getMonthIndex, null, this);
         //    return;
         //    }
 
@@ -162,7 +162,7 @@ public class MonthlyViewerData implements LoaderManager.LoaderCallbacks<Cursor>
             {
             Longtime longtime = new Longtime
                     (cursor.getLong(cursor.getColumnIndexOrThrow( column( CalendarTable.DATE ))));
-            complexDailyDataArray[longtime.daysSinceEpoch() - daysSinceEpochForStart]
+            complexDailyDataArray[longtime.getDayIndex() - daysSinceEpochForStart]
                     .addEntryData(
                             longtime,
                             cursor.getString(cursor.getColumnIndexOrThrow( column( CalendarTable.NOTE ))));

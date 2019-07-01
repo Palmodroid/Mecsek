@@ -1,7 +1,14 @@
 package digitalgarden.mecsek.diary_new;
 
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import digitalgarden.mecsek.utils.Longtime;
 
 /**
  * DataStore organizes data for diary.
@@ -14,7 +21,8 @@ import java.util.List;
  */
 public class DataStore
     {
-    List
+    Map<Integer, DataMonthlyView> DataMonthlyViewList = new HashMap<>();
+
     /**
      * Gets data for monthly view
      * @param indexMonth
@@ -22,7 +30,16 @@ public class DataStore
      */
     public DataMonthlyView getDataMonthlyView( int indexMonth )
         {
-        return null;
+        DataMonthlyView dataMonthlyView = DataMonthlyViewList.get( indexMonth );
+
+        if ( dataMonthlyView == null )
+            {
+            dataMonthlyView = new DataMonthlyView( indexMonth );
+
+            DataMonthlyViewList.put( indexMonth, dataMonthlyView );
+            }
+
+        return dataMonthlyView;
         }
 
     /**
@@ -32,7 +49,14 @@ public class DataStore
      */
     public DataDay getDataDay( int indexDay )
         {
-        return null;
+        Longtime longtime = new Longtime();
+
+        longtime.setDayIndex( indexDay );
+
+        DataMonthlyView dataMonthlyView = getDataMonthlyView( longtime.getMonthIndex() );
+
+
+        return dataMonthlyView.getDay....
         }
 
     }
