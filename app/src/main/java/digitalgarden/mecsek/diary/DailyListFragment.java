@@ -1,6 +1,7 @@
 package digitalgarden.mecsek.diary;
 
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
@@ -35,6 +36,9 @@ public class DailyListFragment extends ListFragment implements
                                                    ProgressObserver.OnProgressListener,
                                                    AdapterView.OnItemLongClickListener // for long-click check
     {
+    private int dayIndex;
+
+
     /** ID for Loader */
     // private final int LOADER_ID = 1;
 
@@ -47,22 +51,50 @@ public class DailyListFragment extends ListFragment implements
      * Creates a new MainListFragment instance
      * (Parameters should be converted to arguments)
      */
-    public static ListFragment newInstance( )
+    public static ListFragment newInstance( int dayIndex )
         {
-        ListFragment listFragmenet = new DailyListFragment();
+        ListFragment listFragment = new DailyListFragment();
+
+        Bundle args = new Bundle();
+        args.putInt("DSE", dayIndex);
+        listFragment.setArguments(args);
+
 		/* args... can be used, too
 		Bundle args = new Bundle();
 		args.putString( "TITLE", exampleTitle);
 		listFragmenet.setArguments(args);
 		*/
-        return listFragmenet;
+        return listFragment;
         }
+
+    ConnectionToActivity connectionToActivity;
+
+    // onAttach is called first, before onCreate!!!
+    @Override
+    public void onAttach(Context context)
+        {
+        super.onAttach(context);
+
+        try
+            {
+            connectionToActivity = (ConnectionToActivity) context;
+            }
+        catch (ClassCastException e)
+            {
+            throw new ClassCastException(context.toString() + " must implement " +
+                    "ConnectionToActivity");
+            }
+        }
+
+
 
     @Override
     public void onCreate(Bundle savedInstanceState)
         {
         Scribe.locus();
         super.onCreate(savedInstanceState);
+
+        dayIndex = getArguments().getInt("DSE");
         }
 
 
@@ -111,6 +143,8 @@ public class DailyListFragment extends ListFragment implements
         return view;
         }
 
+    DailyData dailyData;
+
     @Override
     public void onActivityCreated(Bundle savedInstanceState)
         {
@@ -119,6 +153,9 @@ public class DailyListFragment extends ListFragment implements
 
         // Fragment has options menu
         setHasOptionsMenu(true);
+
+        dailyData =
+                connectionToActivity.getDataStore().getDailyData(dayIndex);
 
         // Set up adapter
         setListAdapter( new DailyListAdapter( getActivity() ) );

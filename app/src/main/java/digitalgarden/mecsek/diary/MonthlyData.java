@@ -45,6 +45,9 @@ public class MonthlyData implements LoaderManager.LoaderCallbacks<Cursor>
     // First day of next view - Longtime without timeinfo
     private Longtime longtimeLast;
 
+    // First day of the month is on this index in array
+    private int offset;
+
 
     /**
      * Constructor sets parameters for this month
@@ -67,8 +70,11 @@ public class MonthlyData implements LoaderManager.LoaderCallbacks<Cursor>
         yearMonthString = longtimeFirst.toStringYearMonth(true);
         int month = longtimeFirst.get(Longtime.MONTH);
 
+        // First day of the month is on this offset inside array
+        offset = longtimeFirst.getDayName();
+
         // Roll back to START DAY
-        longtimeFirst.addDays(-longtimeFirst.getDayName());
+        longtimeFirst.addDays(-offset);
         dayIndexOfFirstDay = longtimeFirst.getDayIndex();
 
         // ENDING DAY - FIRST DAY OF THE NEXT MONTH
@@ -189,5 +195,10 @@ public class MonthlyData implements LoaderManager.LoaderCallbacks<Cursor>
     public DailyData getDailyData(int index )
         {
         return dailyDataArray[index];
+        }
+
+    public DailyData getDailyDataWithOffset(int index )
+        {
+        return dailyDataArray[index + offset];
         }
     }

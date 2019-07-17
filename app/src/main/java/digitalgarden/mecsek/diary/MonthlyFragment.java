@@ -19,17 +19,17 @@ public class MonthlyFragment extends Fragment
 
     /**
      * newInstance constructor for creating fragment with arguments
-     * @param monthsSinceEpoch
+     * @param monthIndex
      * 
      * sets actual month as getMonthIndex, which is equal the position in the MSEViewer
      *
      * @return
      */
-    public static MonthlyFragment newInstance(int monthsSinceEpoch )
+    public static MonthlyFragment newInstance(int monthIndex )
         {
         MonthlyFragment fragmentFirst = new MonthlyFragment();
         Bundle args = new Bundle();
-        args.putInt("MSE", monthsSinceEpoch);
+        args.putInt("MSE", monthIndex);
 
         // Longtime lt = new Longtime();
         // lt.setMonthIndex( getMonthIndex );
@@ -43,13 +43,6 @@ public class MonthlyFragment extends Fragment
 
 
     ConnectionToActivity connectionToActivity;
-
-    // The container Activity must implement this interface so the frag can deliver messages
-    public interface ConnectionToActivity
-        {
-        public void onReady(DailyData data);
-        public DataStore getDataStore();
-        }
 
     // onAttach is called first, before onCreate!!!
     @Override

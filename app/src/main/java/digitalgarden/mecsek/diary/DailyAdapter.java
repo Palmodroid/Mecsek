@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 
 import digitalgarden.mecsek.scribe.Scribe;
 
-public class DayAdapter extends FragmentStatePagerAdapter
+public class DailyAdapter extends FragmentStatePagerAdapter
     {
     private static int NUM_DAYS = 167880;
     private long today;
@@ -16,7 +16,7 @@ public class DayAdapter extends FragmentStatePagerAdapter
     FragmentManager fm;
 
 
-    public DayAdapter(FragmentManager fragmentManager, long today)
+    public DailyAdapter(FragmentManager fragmentManager, long today)
         {
         super(fragmentManager);
         this.today = today;
@@ -35,7 +35,7 @@ public class DayAdapter extends FragmentStatePagerAdapter
     public Fragment getItem(int position)
         {
         // position == montsSinceEpoch
-        return DailyListFragment.newInstance( ); //null;
+        return DailyListFragment.newInstance( position ); //null;
         }
 
     // Returns the page title for the top indicator

@@ -53,7 +53,7 @@ public class DiaryActivity extends AppCompatActivity
         dataStore = new DataStore(this);
 
         monthlyAdapter = new MonthlyAdapter( getSupportFragmentManager() );
-        dailyAdapter = new DayAdapter( getSupportFragmentManager(), dataStore.getToday().get());
+        dailyAdapter = new DailyAdapter( getSupportFragmentManager(), dataStore.getToday().get());
 
         ViewPager viewPagerMonthly = (ViewPager) findViewById(R.id.view_pager_monthly);
         viewPagerMonthly.setAdapter(monthlyAdapter);

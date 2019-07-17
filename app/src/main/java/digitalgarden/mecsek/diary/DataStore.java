@@ -60,7 +60,7 @@ public class DataStore
      * @param indexDay
      * @return
      */
-    public DailyData getDataDay(int indexDay )
+    public DailyData getDailyData(int indexDay )
         {
         Longtime longtime = new Longtime();
 
@@ -68,8 +68,11 @@ public class DataStore
 
         MonthlyData monthlyData = getMonthlyData( longtime.getMonthIndex() );
 
+        int day = longtime.get( Longtime.DAY-1 ); // !!!!!!!!!!!!!!!!!! -1 kell, vagy itt kell??
 
-        return null; // monthlyData.getDay....
+        DailyData dailyData = monthlyData.getDailyDataWithOffset( day );
+
+        return dailyData;
         }
 
     public AppCompatActivity getAppCompatActivity()
