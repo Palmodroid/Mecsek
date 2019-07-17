@@ -17,14 +17,12 @@ import digitalgarden.mecsek.database.calendar.CalendarControllActivity;
 import digitalgarden.mecsek.database.medications.MedicationsControllActivity;
 import digitalgarden.mecsek.database.patients.PatientsControllActivity;
 import digitalgarden.mecsek.database.pills.PillsControllActivity;
-import digitalgarden.mecsek.diary_new.DiaryActivityNew;
-import digitalgarden.mecsek.exportimport.AsyncTaskDialogFragment;
 import digitalgarden.mecsek.diary.DiaryActivity;
+import digitalgarden.mecsek.exportimport.AsyncTaskDialogFragment;
 import digitalgarden.mecsek.permission.PermissionRequestDialog;
 import digitalgarden.mecsek.scribe.Scribe;
 import digitalgarden.mecsek.selectfile.SelectFileActivity;
 import digitalgarden.mecsek.selectfile.SelectFileActivity.Mode;
-import digitalgarden.mecsek.utils.Longtime;
 
 import static digitalgarden.mecsek.Debug.initScribe;
 import static digitalgarden.mecsek.MainChooserDialogFragment.Type.CONFIRM_IMPORT;
@@ -234,7 +232,7 @@ public class MainChooserActivity extends FragmentActivity implements PermissionR
 
 					Intent i = new Intent();
 
-					i.setClass(MainChooserActivity.this, DiaryActivityNew.class);
+					i.setClass(MainChooserActivity.this, DiaryActivity.class);
 					startActivity(i);
 					}
 				});

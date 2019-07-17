@@ -1,4 +1,4 @@
-package digitalgarden.mecsek.diary_new;
+package digitalgarden.mecsek.diary;
 
 import digitalgarden.mecsek.utils.Longtime;
 

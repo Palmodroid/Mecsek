@@ -1,21 +1,36 @@
-package digitalgarden.mecsek.diary_new;
+package digitalgarden.mecsek.diary;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import digitalgarden.mecsek.utils.Longtime;
 
-/**
- * DataDay stores all data for one day.
- * The list of the entries is filled during load, but when loaded, will be ready for showing
- */
-public class DataDay
-    {
-    // List for loading data
-    private List<DataEntry> dataEntryListToLoad = new ArrayList<>();
 
-    // List for data to show (loaded data is be moved here after loading finished)
-    private List<DataEntry> dataEntryListToUse = null;
+public class OLDComplexDailyData
+    {
+    public class EntryData
+        {
+        private final Longtime date;
+        private final String note;
+
+        public EntryData(Longtime date, String note)
+            {
+            this.date = date;
+            this.note = note;
+            }
+
+        public String getNote()
+            {
+            return note;
+            }
+        public long getDate() { return date.get(); }
+        }
+
+    // List of loading data
+    private List<EntryData> entryDataListToLoad = new ArrayList<>();
+
+    // List of data to show (loaded data is be moved here after loading finished)
+    private List<EntryData> entryDataListToUse = null;
 
     // Day of the month as string (to show as header)
     private String dayOfMonth;
@@ -29,9 +44,9 @@ public class DataDay
      * Second, loader fill up data for the whole monthly view, and fills data for the days
      * @param longtime time of this day (no timeinfo)
      * @param month month of this monthly view
-     * @param today datestamp of today, comes from DiaryActivity without timeinfo
+     * @param today datestamp of today, comes from OLDDiaryActivity without timeinfo
      */
-    public DataDay(Longtime longtime, int month, long today)
+    public OLDComplexDailyData(Longtime longtime, int month, long today)
         {
         dayOfMonth = longtime.toStringDayOfMonth();
 
@@ -58,20 +73,20 @@ public class DataDay
         return 0xFFAD6519;
         }
 
-    public void addEntryData(long id, Longtime date, String note )
+    public void addEntryData( Longtime date, String note )
         {
-        dataEntryListToLoad.add( new DataEntry(id, note, date));
+        entryDataListToLoad.add( new EntryData(date,note));
         }
 
     public void onLoadFinished()
         {
-        dataEntryListToUse = dataEntryListToLoad;
-        dataEntryListToLoad = new ArrayList<>();
+        entryDataListToUse = entryDataListToLoad;
+        entryDataListToLoad = new ArrayList<>();
         }
 
-    public List<DataEntry> getEntryDataList()
+    public List<EntryData> getEntryDataList()
         {
-        return dataEntryListToUse;
+        return entryDataListToUse;
         }
 
     public String getDayOfMonth()
@@ -83,5 +98,4 @@ public class DataDay
         {
         return dayColor;
         }
-
     }

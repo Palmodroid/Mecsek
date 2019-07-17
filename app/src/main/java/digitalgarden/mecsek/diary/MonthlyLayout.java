@@ -11,19 +11,19 @@ import digitalgarden.mecsek.viewutils.TextPaint;
 /**
  * Forces 7x5 Grid for the children
  */
-public class MonthlyViewerLayout extends CheckedLayout
+public class MonthlyLayout extends CheckedLayout
     {
-    public MonthlyViewerLayout(Context context)
+    public MonthlyLayout(Context context)
         {
         super(context);
         }
 
-    public MonthlyViewerLayout(Context context, AttributeSet attrs)
+    public MonthlyLayout(Context context, AttributeSet attrs)
         {
         super(context, attrs);
         }
 
-    public MonthlyViewerLayout(Context context, AttributeSet attrs, int defStyleAttr)
+    public MonthlyLayout(Context context, AttributeSet attrs, int defStyleAttr)
         {
         super(context, attrs, defStyleAttr);
         }
@@ -50,6 +50,24 @@ public class MonthlyViewerLayout extends CheckedLayout
         childView.setRowPaint( rowPaint );
 
         return childView;
+        }
+
+
+    // Activity, Fragment, View and Data are all created at this point.
+    public void setMonthlyData(MonthlyData monthlyData )
+        {
+        for ( int index = 0; index < 42; index++ )
+            {
+            ((ComplexDailyView)getChildAt( index )).setDailyData( monthlyData.getDailyData(index) );
+            }
+        }
+
+    public void onLoadFinished()
+        {
+        for ( int index = 0; index < 42; index++ )
+            {
+            ((ComplexDailyView)getChildAt( index )).onLoadFinished();
+            }
         }
 
     // https://medium.com/square-corner-blog/android-leak-pattern-subscriptions-in-views-18f0860aa74c

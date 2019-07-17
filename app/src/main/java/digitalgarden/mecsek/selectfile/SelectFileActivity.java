@@ -171,7 +171,7 @@ public class SelectFileActivity extends FragmentActivity
 	    // Elem kiválasztásakor 
 	    // DIR - továbblépünk a könyvtárra
 	    // PARENT_DIR - eggyel vissza - ilyenkor a jelenlegi könyvtár lesz a lista első eleme
-	    // FILE (minden más) - a kiválasztott file adataival (setData) visszatérünk
+	    // FILE (minden más) - a kiválasztott file adataival (setMonthlyData) visszatérünk
 	    list.setOnItemClickListener( new OnItemClickListener()
 	    	{
 	    	@Override

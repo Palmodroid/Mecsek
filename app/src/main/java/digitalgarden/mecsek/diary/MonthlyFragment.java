@@ -8,34 +8,26 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import digitalgarden.mecsek.R;
 
-public class MonthlyViewerFragment extends Fragment
+public class MonthlyFragment extends Fragment
         implements View.OnClickListener, View.OnLongClickListener
     {
     // Store instance variables
-    private long today;
-    private int monthsSinceEpoch;
-
-    private MonthlyViewerData monthlyViewerData;
+    private int monthIndex;
 
     /**
      * newInstance constructor for creating fragment with arguments
      * @param monthsSinceEpoch
      * 
      * sets actual month as getMonthIndex, which is equal the position in the MSEViewer
-     * 
-     * @param today
-     * 
-     * date of today (time part is deleted) - longtime as long
-     * 
+     *
      * @return
      */
-    public static MonthlyViewerFragment newInstance(int monthsSinceEpoch, long today)
+    public static MonthlyFragment newInstance(int monthsSinceEpoch )
         {
-        MonthlyViewerFragment fragmentFirst = new MonthlyViewerFragment();
+        MonthlyFragment fragmentFirst = new MonthlyFragment();
         Bundle args = new Bundle();
         args.putInt("MSE", monthsSinceEpoch);
 
@@ -43,31 +35,23 @@ public class MonthlyViewerFragment extends Fragment
         // lt.setMonthIndex( getMonthIndex );
         // Log.d("TODAY", "Fragments month: " + lt.toString());
 
-        args.putLong("TODAY", today);
+        // args.putLong("TODAY", today);
         fragmentFirst.setArguments(args);
 
         return fragmentFirst;
         }
 
-    // Store instance variables based on arguments passed
-    @Override
-    public void onCreate(Bundle savedInstanceState)
-        {
-        super.onCreate(savedInstanceState);
 
-        monthsSinceEpoch = getArguments().getInt("MSE");
-        today = getArguments().getLong("TODAY");
-        }
-
-
-    OnInputReadyListener onInputReadyListener;
+    ConnectionToActivity connectionToActivity;
 
     // The container Activity must implement this interface so the frag can deliver messages
-    public interface OnInputReadyListener
+    public interface ConnectionToActivity
         {
-        public void onReady(ComplexDailyData data);
+        public void onReady(DailyData data);
+        public DataStore getDataStore();
         }
 
+    // onAttach is called first, before onCreate!!!
     @Override
     public void onAttach(Context context)
         {
@@ -75,61 +59,77 @@ public class MonthlyViewerFragment extends Fragment
 
         try
             {
-            onInputReadyListener = (OnInputReadyListener) context;
+            connectionToActivity = (ConnectionToActivity) context;
             }
         catch (ClassCastException e)
             {
             throw new ClassCastException(context.toString() + " must implement " +
-                    "OnInputReadyListener");
+                    "ConnectionToActivity");
             }
         }
 
+
+    // Store instance variables based on arguments passed
     @Override
-    public void onDetach()
+    public void onCreate(Bundle savedInstanceState)
         {
-        super.onDetach();
+        super.onCreate(savedInstanceState);
 
-
+        monthIndex = getArguments().getInt("MSE");
+        // today = getArguments().getLong("TODAY");
         }
 
+
+    MonthlyData monthlyData;
+    MonthlyLayout monthlyLayout;
+
     // Inflate the view for the fragment based on layout XML
+    // onCreateView is called AFTER onAttach and onCreate, Activity's onCreate is ready
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState)
         {
+        monthlyData =
+                connectionToActivity.getDataStore().getMonthlyData(monthIndex);
+
+        monthlyData.setMonthlyFragment(this);
+
         View view = inflater.
                 inflate(R.layout.fragment_monthly_viewer, container, false);
 
         // secondary parameters, which cannot be passed bay constructor (View constructor cannot
         // be changed)
-        MonthlyViewerLayout monthlyViewerLayout =
-                ((MonthlyViewerLayout)view.findViewById(R.id.diary_layout));
-        monthlyViewerData = new MonthlyViewerData(this, monthlyViewerLayout,
-                monthsSinceEpoch, today );
+        monthlyLayout =
+                ((MonthlyLayout)view.findViewById(R.id.diary_layout));
 
-        monthlyViewerLayout.setOnClickListener( this );
-        monthlyViewerLayout.setOnLongClickListener( this );
+        monthlyLayout.setMonthlyData( monthlyData );
+        monthlyLayout.setOnClickListener( this );
+        monthlyLayout.setOnLongClickListener( this );
 
         TextView yearMonthTextView =
                 (TextView) view.findViewById(R.id.year_month_text_view);
-        yearMonthTextView.setText( monthlyViewerData.getYearMonthString() );
+        yearMonthTextView.setText( monthlyData.getYearMonthString() );
 
-        // Azért került ide, hogy a View már biztosan kész legyen. Párja a másikban.
-        monthlyViewerData.createLoader();
+        monthlyData.createLoader();
 
         return view;
+        }
+
+    public void onLoadFinished()
+        {
+        monthlyLayout.onLoadFinished();
         }
 
     @Override
     public void onClick(View v)
         {
-        onInputReadyListener.onReady( ((ComplexDailyView)v).getData() );
+        connectionToActivity.onReady( ((ComplexDailyView)v).getDailyData() );
         }
 
     @Override
     public boolean onLongClick(View v)
         {
-        onInputReadyListener.onReady( ((ComplexDailyView)v).getData() );
+        connectionToActivity.onReady( ((ComplexDailyView)v).getDailyData() );
         return true;
         }
 
@@ -139,7 +139,16 @@ public class MonthlyViewerFragment extends Fragment
         super.onDestroyView();
 
         // elfordításnál itt probléma lesz!! Vagyis kilövi, holott nem kellene.
-        monthlyViewerData.destroyLoader();
+        monthlyData.destroyLoader();
+        }
+
+
+    @Override
+    public void onDetach()
+        {
+        super.onDetach();
+
+
         }
 
     }

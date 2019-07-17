@@ -3,10 +3,7 @@ package digitalgarden.mecsek.diary;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -14,35 +11,30 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import digitalgarden.mecsek.R;
+
 import digitalgarden.mecsek.scribe.Scribe;
-import digitalgarden.mecsek.utils.Keyboard;
-import digitalgarden.mecsek.utils.Longtime;
 
 /**
- * DiaryActivity shows the ViewPager, which gets its data from the DiaryAdapter.
- * MonthlyViewerFragment shows the days of one month, as ComplexDailyView-s of MonthlyViewerLayout.
- * MonthlyViewerData stores all data on a daily basis.
+ * OLDDiaryActivity shows the ViewPager, which gets its data from the OLDDiaryAdapter.
+ * MonthlyFragment shows the days of one month, as ComplexDailyView-s of MonthlyViewerLayout.
+ * OLDMonthlyViewerData stores all data on a daily basis.
  */
 public class DiaryActivity extends AppCompatActivity
-        implements MonthlyViewerFragment.OnInputReadyListener
+        implements MonthlyFragment.ConnectionToActivity
     {
-    FragmentStatePagerAdapter diaryAdapter;
+    private DataStore dataStore;
 
-    FrameLayout dailyListFrame;
+    private FragmentStatePagerAdapter monthlyAdapter;
+    private FragmentStatePagerAdapter dailyAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
         {
-        Longtime today = new Longtime();
-        today.set();
-        today.clearDate();
-
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_diary);
+        setContentView(R.layout.activity_diary_new);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -57,18 +49,26 @@ public class DiaryActivity extends AppCompatActivity
                 }
             });
 
-        dailyListFrame = findViewById( R.id.daily_list_frame );
+        // Create datastore for both adapters
+        dataStore = new DataStore(this);
 
-        ViewPager vpPager = (ViewPager) findViewById(R.id.view_pager_diary);
-        diaryAdapter = new DiaryAdapter( getSupportFragmentManager(), today.get());
-        vpPager.setAdapter(diaryAdapter);
-        vpPager.setCurrentItem( today.getMonthIndex() );
-        vpPager.setOffscreenPageLimit(1);
+        monthlyAdapter = new MonthlyAdapter( getSupportFragmentManager() );
+        dailyAdapter = new DayAdapter( getSupportFragmentManager(), dataStore.getToday().get());
 
-        Log.d("TODAY", "Today: " + today.toString());
+        ViewPager viewPagerMonthly = (ViewPager) findViewById(R.id.view_pager_monthly);
+        viewPagerMonthly.setAdapter(monthlyAdapter);
+        viewPagerMonthly.setCurrentItem( dataStore.getToday().getMonthIndex() );
+        viewPagerMonthly.setOffscreenPageLimit(1);
+
+        ViewPager viewPagerDaily = (ViewPager) findViewById(R.id.view_pager_daily);
+        viewPagerDaily.setAdapter(dailyAdapter);
+        viewPagerDaily.setCurrentItem( dataStore.getToday().getDayIndex() );
+        viewPagerDaily.setOffscreenPageLimit(1);
+
+        Log.d("TODAY", "Today: " + dataStore.getToday().toString());
 
         // Attach the page change listener inside the activity
-        vpPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener()
+        viewPagerMonthly.addOnPageChangeListener(new ViewPager.OnPageChangeListener()
             {
 
             // This method will be invoked when a new page becomes selected.
@@ -101,29 +101,6 @@ public class DiaryActivity extends AppCompatActivity
         {
         Scribe.locus();
         super.onResumeFragments();
-
-        FragmentManager fragmentManager = getSupportFragmentManager();
-
-        Fragment dailyListFragment = fragmentManager.findFragmentByTag("LIST");
-        if (dailyListFragment == null)
-            {
-/*            dailyListFragment = DailyListFragment.newInstance( );
-
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.add( R.id.daily_list_frame, dailyListFragment, "LIST" );
-            fragmentTransaction.commit();
-
-            // New fragment always starts without keyboard
-            Keyboard.hide( this );
-*/
-            Scribe.debug("New LIST Fragment was created, added");
-            }
-        else
-            {
-            dailyListFrame.setVisibility( View.VISIBLE );
-            Scribe.debug("Old LIST Fragment was found");
-            }
-
         }
 
     @Override
@@ -152,55 +129,14 @@ public class DiaryActivity extends AppCompatActivity
         }
 
     @Override
-    public void onReady(ComplexDailyData data)
+    public void onReady( DailyData data)
         {
-        dailyListFrame.setVisibility( View.VISIBLE );
 
-        FragmentManager fragmentManager = getSupportFragmentManager();
-
-        Fragment dailyListFragment = fragmentManager.findFragmentByTag("LIST");
-        if (dailyListFragment == null)
-            {
-            dailyListFragment = DailyListFragment.newInstance( );
-
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.add( R.id.daily_list_frame, dailyListFragment, "LIST" );
-            fragmentTransaction.commit();
-
-            // New fragment always starts without keyboard
-            Keyboard.hide( this );
-
-            Scribe.debug("New LIST Fragment was created, added");
-            }
-        else
-            {
-            Scribe.debug("Old LIST Fragment was found");
-            }
-
-        Toast.makeText( this, "SHORT CLICK: " + data.getDayOfMonth(), Toast.LENGTH_SHORT).show();
         }
 
     @Override
-    public void onBackPressed()
+    public DataStore getDataStore()
         {
-        dailyListFrame.setVisibility( View.GONE );
-        Fragment dailyListFragment = getSupportFragmentManager().findFragmentByTag("LIST");
-        if (dailyListFragment != null)
-            {
-            FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-            fragmentTransaction.remove( dailyListFragment );
-            fragmentTransaction.commit();
-
-            // New fragment always starts without keyboard
-            Keyboard.hide( this );
-
-            Scribe.debug("New LIST Fragment was created, added");
-            }
-        else
-            {
-            super.onBackPressed();
-            Scribe.debug("Old LIST Fragment was found");
-            }
-
+        return dataStore;
         }
     }

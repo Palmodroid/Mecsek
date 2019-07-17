@@ -1,5 +1,32 @@
 Data osztályok
 
+DiaryActivityNew - R.layout.activity_diary_new
+
+(DataStore itt kerül létrehozásra) 
+
+ViewPagerMonthly
+ennek adaptere MonthlyViewAdapter - MonthlyViewer fragmentet ad vissza - az adott pozícióra
+
+MonthlyViewerFragment -
+adatait a DataStore-ból veszi.
+Ehhez viszont az Activity-n keresztül (vagyis az OnInputReadyListeneren) keresztül fér hozzá.
+
+
+DailyAdapter
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 Hogyan áll össze ez az egész?
 
 - DataMonthlyView - aki a betöltést végzi.

@@ -8,7 +8,7 @@ android:layout_width="match_parent"
 android:layout_height="match_parent"
 android:orientation="vertical"
 app:layout_behavior="@string/appbar_scrolling_view_behavior"
-tools:context="digitalgarden.mecsek.diary.DiaryActivity"
+tools:context="digitalgarden.mecsek.diary.OLDDiaryActivity"
 tools:showIn="@layout/activity_diary">
 
 <TextView
@@ -31,7 +31,7 @@ tools:showIn="@layout/activity_diary">
     android:verticalSpacing="4dp"
     android:horizontalSpacing="4dp" />
 
-<digitalgarden.mecsek.diary.MonthlyViewerLayout
+<digitalgarden.mecsek.diary.MonthlyLayout
     android:id="@+id/diary_layout"
     android:layout_width="match_parent"
     android:layout_height="1dp"

@@ -6,8 +6,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.view.View;
-import android.widget.Toast;
 
 import digitalgarden.mecsek.viewutils.BackgroundView;
 import digitalgarden.mecsek.viewutils.TextPaint;
@@ -31,7 +29,7 @@ public class ComplexDailyView extends BackgroundView
     private TextPaint rowPaint;
 
     // Data for this day
-    private ComplexDailyData complexDailyData;
+    private DailyData dailyData;
 
     private int rowy;
     private int rowx;
@@ -70,14 +68,14 @@ public class ComplexDailyView extends BackgroundView
 //        this.dayColor = dayColor;
 //        }
 
-    public void setData( ComplexDailyData complexDailyData )
+    public void setDailyData(DailyData dailyData)
         {
-        this.complexDailyData = complexDailyData;
+        this.dailyData = dailyData;
         }
 
-    public ComplexDailyData getData()
+    public DailyData getDailyData()
         {
-        return this.complexDailyData;
+        return this.dailyData;
         }
 
     public void setDayPaint(TextPaint dayPaint)
@@ -119,7 +117,7 @@ public class ComplexDailyView extends BackgroundView
         dayPaint.setTextAlign(TextPaint.ALIGN_LEFT + TextPaint.ALIGN_CENTER);
         // rowPaint.setTextToMeasure("M", "y");
 
-        // bitmap = BitmapFactory.decodeResource( getContext().getResources(),
+        // bitmap = BitmapFactory.decodeResource( getAppCompatActivity().getResources(),
         //        R.drawable.smallballoons);
         }
 
@@ -165,16 +163,16 @@ public class ComplexDailyView extends BackgroundView
     @Override
     protected void onDraw(Canvas canvas)
         {
-        getBackgroundPaint().setColor( complexDailyData.getDayColor() );
+        getBackgroundPaint().setColor( dailyData.getDayColor() );
 
         super.onDraw(canvas);
 
-        dayPaint.drawText(canvas, complexDailyData.getDayOfMonth() );
+        dayPaint.drawText(canvas, dailyData.getDayOfMonth() );
 
-        if ( complexDailyData.getEntryDataList() != null )
+        if ( dailyData.getEntryDataList() != null )
             {
             int y = rowy;
-            for (ComplexDailyData.EntryData entry : complexDailyData.getEntryDataList())
+            for (DataEntry entry : dailyData.getEntryDataList())
                 {
                 rowPaint.drawEllipsizedText(canvas,
                         entry.getNote(), rowx, y, rowMaxWidth);
@@ -185,4 +183,8 @@ public class ComplexDailyView extends BackgroundView
         // canvas.drawBitmap(icon, bitmapX, bitmapY, null);
         }
 
+    public void onLoadFinished()
+        {
+        invalidate();
+        }
     }

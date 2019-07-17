@@ -1,4 +1,5 @@
-package digitalgarden.mecsek.diary_new;
+package digitalgarden.mecsek.diary;
+
 
 import android.database.Cursor;
 import android.os.Bundle;
@@ -9,10 +10,6 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 
 import digitalgarden.mecsek.database.calendar.CalendarTable;
-import digitalgarden.mecsek.diary.ComplexDailyData;
-import digitalgarden.mecsek.diary.ComplexDailyView;
-import digitalgarden.mecsek.diary.MonthlyViewerFragment;
-import digitalgarden.mecsek.diary.MonthlyViewerLayout;
 import digitalgarden.mecsek.scribe.Scribe;
 import digitalgarden.mecsek.utils.Longtime;
 
@@ -20,73 +17,74 @@ import static digitalgarden.mecsek.database.DatabaseMirror.column;
 import static digitalgarden.mecsek.database.DatabaseMirror.table;
 import static digitalgarden.mecsek.database.library.LibraryDatabase.CALENDAR;
 
-
 /**
- * DataMonthlyView loads and stores all data for each day (As DataDay-s)
+ * All data for this monthlyview is stored in this class
+ * Instead of Loaders:
+ * https://stackoverflow.com/questions/51408098/what-is-the-appropriate-replacer-of-deprecated-getsupportloadermanager
  */
-public class DataMonthlyView implements LoaderManager.LoaderCallbacks<Cursor>
+public class OLDMonthlyViewerData implements LoaderManager.LoaderCallbacks<Cursor>
     {
-    private MonthlyViewerFragment monthlyViewerFragment;
+    //Contains caller: fragment of the whole month
+    private MonthlyFragment monthlyFragment;
 
     // Data for each daily view
-    // There are 42 days in one monthly view (some of them from the previous and next month
-    private DataDay[] DataDayArray = new DataDay[42];
+    private OLDComplexDailyData[] OLDComplexDailyDataArray = new OLDComplexDailyData[42];
 
-    // monthIndex == index of the ViewPager
-    private int monthIndex;
+    // Months since epoch == index of the ViewPager
+    private int monthsSinceEpoch;
 
     // "Name" of this month as string (Year, Month and Month as string)
     private String yearMonthString;
 
     // First day of this view - Longtime without timeinfo
-    private Longtime longtimeFirst;
+    private Longtime longtimeStart;
 
     // Days since epoch - used for indexing complexDayilyDataArray
-    private int dayIndexOfFirstDay;
+    private int daysSinceEpochForStart;
 
     // First day of next view - Longtime without timeinfo
-    private Longtime longtimeLast;
+    private Longtime longtimeEnd;
 
 
     /**
      * Constructor sets parameters for this month
-     *
-     * @param monthIndex ViewPager index, which is months since epoch
-     * @param today            Timestamp of today comes from DiaryActivity (as long because fragment
-     *                         argiments are primitives)
+     * @param monthsSinceEpoch ViewPager index, which is months since epoch
+     * @param today Timestamp of today comes from OLDDiaryActivity (as long because fragment
+     *              argiments are primitives)
      * @return year and month as string
      */
-    public DataMonthlyView(MonthlyViewerFragment monthlyViewerFragment,
-                             MonthlyViewerLayout monthlyViewerLayout,
-                             int monthIndex,
-                             long today)
+    public OLDMonthlyViewerData(MonthlyFragment monthlyFragment,
+                                MonthlyLayout monthlyLayout,
+                                int monthsSinceEpoch,
+                                long today )
         {
-        this.monthlyViewerFragment = monthlyViewerFragment;
-        this.monthIndex = monthIndex;
+        this.monthlyFragment = monthlyFragment;
+        this.monthsSinceEpoch = monthsSinceEpoch;
 
         // START DAY of this monthly view - FIRST DAY of the month is set first
-        longtimeFirst = new Longtime();
-        longtimeFirst.setMonthIndex(monthIndex);
-        longtimeFirst.setDayOfMonth(1);
+        longtimeStart = new Longtime();
+        longtimeStart.setMonthIndex( monthsSinceEpoch );
+        longtimeStart.setDayOfMonth(1);
         // YEAR MONTH and DAY (DAY_NAME) is set, but TIME is not
 
         // Data from FIRST DAY of this month
-        yearMonthString = longtimeFirst.toStringYearMonth(true);
-        int month = longtimeFirst.get(Longtime.MONTH);
+        yearMonthString = longtimeStart.toStringYearMonth( true );
+        int month = longtimeStart.get(Longtime.MONTH);
 
         // Roll back to START DAY
-        longtimeFirst.addDays(-longtimeFirst.getDayName());
-        dayIndexOfFirstDay = longtimeFirst.getDayIndex();
+        longtimeStart.addDays( -longtimeStart.getDayName() );
+        daysSinceEpochForStart = longtimeStart.getDayIndex();
 
         // ENDING DAY - FIRST DAY OF THE NEXT MONTH
-        longtimeLast = longtimeFirst.duplicate();
-        longtimeLast.addDays(42);
+        longtimeEnd = longtimeStart.duplicate();
+        longtimeEnd.addDays( 42 );
 
-        Longtime longtime = longtimeFirst.duplicate();
-        for (int n = 0; n < 42; n++)
+        Longtime longtime = longtimeStart.duplicate();
+        for (int n= 0; n < 42; n++)
             {
-            DataDayArray[n] = new DataDay(longtime, month, today);
-            // ((ComplexDailyView) monthlyViewerLayout.getChildAt(n)).setData(DataDayArray[n]);
+            OLDComplexDailyDataArray[n] = new OLDComplexDailyData( longtime, month, today );
+            //((ComplexDailyView) monthlyLayout.getChildAt(n)).setMonthlyData(
+            // OLDComplexDailyDataArray[n]);
             longtime.addDays(1); // 86350
             }
         }
@@ -101,28 +99,26 @@ public class DataMonthlyView implements LoaderManager.LoaderCallbacks<Cursor>
 
     public void createLoader()
         {
-        Scribe.note("LOADER: CreateLoader - id: " + monthIndex);
-        LoaderManager.getInstance(monthlyViewerFragment.getActivity()).
-                initLoader(monthIndex, null, this);
+        Scribe.note("LOADER: CreateLoader - id: " + monthsSinceEpoch);
+        LoaderManager.getInstance(monthlyFragment.getActivity()).
+                initLoader( monthsSinceEpoch, null, this);
         }
 
     /* !! Ez elfordításkor is mindent újratölt !! */
     public void destroyLoader()
         {
-        Scribe.note("LOADER: DestroyLoader - id: " + monthIndex);
-        LoaderManager.getInstance(monthlyViewerFragment.getActivity()).
-                destroyLoader(monthIndex);
+        Scribe.note("LOADER: DestroyLoader - id: " + monthsSinceEpoch);
+        LoaderManager.getInstance(monthlyFragment.getActivity()).
+              destroyLoader( monthsSinceEpoch );
         }
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, @Nullable Bundle bundle)
         {
-        Scribe.note("LOADER: onCreateLoader (Query) started - id: " + monthIndex);
+        Scribe.note("LOADER: onCreateLoader (Query) started - id: " + monthsSinceEpoch);
 
-        if (id != monthIndex)
-            {
+        if ( id != monthsSinceEpoch )
             return null;
-            }
 
         String[] projection = {
                 column(CalendarTable.DATE),
@@ -131,19 +127,19 @@ public class DataMonthlyView implements LoaderManager.LoaderCallbacks<Cursor>
         String selection =
                 column(CalendarTable.DATE) + " >=  ? AND " + column(CalendarTable.DATE) + " < ?";
         String[] selectionArgs = {
-                Long.toString(longtimeFirst.get()),
-                Long.toString(longtimeLast.get())};
+                Long.toString( longtimeStart.get()),
+                Long.toString( longtimeEnd.get()) };
 
         // http://code.google.com/p/android/issues/detail?id=3153
         CursorLoader cursorLoader = new CursorLoader(
-                monthlyViewerFragment.getContext(),
-                table(CALENDAR).contentUri(),
+                monthlyFragment.getContext(),
+                table( CALENDAR ).contentUri(),
                 projection,
                 selection,
                 selectionArgs,
                 //new String[] { "%"+filterString+"%" },
                 // ha nincs filterClause, akkor nem használja fel
-                null);
+                null );
 
         return cursorLoader;
         }
@@ -151,30 +147,29 @@ public class DataMonthlyView implements LoaderManager.LoaderCallbacks<Cursor>
     @Override
     public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor cursor)
         {
-        Scribe.note("LOADER: onLoadFinished - id: " + monthIndex);
+        Scribe.note("LOADER: onLoadFinished - id: " + monthsSinceEpoch);
 
         // !! VOLT EGY CURSOR.CLOSE() AZ EREDETI KÓDBAN. EZ SZTEM. MŰKÖDIK !!
         // https://stackoverflow.com/questions/49524029/support-library-27-1-0-onloaderfinished
         // -returns-a-closed-cursor-when-starting-a
         // if ( cursor.isClosed() )
         //    {
-        //    LoaderManager.getInstance(monthlyViewerFragment.getActivity()).
-        //            restartLoader(monthIndex, null, this);
+        //    LoaderManager.getInstance(monthlyFragment.getActivity()).
+        //            restartLoader(getMonthIndex, null, this);
         //    return;
         //    }
 
         for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext())
             {
             Longtime longtime = new Longtime
-                    (cursor.getLong(cursor.getColumnIndexOrThrow(column(CalendarTable.DATE))));
-            DataDayArray[longtime.getDayIndex() - dayIndexOfFirstDay]
+                    (cursor.getLong(cursor.getColumnIndexOrThrow( column( CalendarTable.DATE ))));
+            OLDComplexDailyDataArray[longtime.getDayIndex() - daysSinceEpochForStart]
                     .addEntryData(
-                            longtime.getDayIndex(), // ?????????????????????????????????????????
                             longtime,
-                            cursor.getString(cursor.getColumnIndexOrThrow(column(CalendarTable.NOTE))));
+                            cursor.getString(cursor.getColumnIndexOrThrow( column( CalendarTable.NOTE ))));
             }
 
-        for (DataDay data : DataDayArray)
+        for ( OLDComplexDailyData data : OLDComplexDailyDataArray)
             {
             data.onLoadFinished();
             }

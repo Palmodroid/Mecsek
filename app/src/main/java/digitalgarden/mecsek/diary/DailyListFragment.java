@@ -217,16 +217,16 @@ public class DailyListFragment extends ListFragment implements
     public void onLoadFinished(Loader<List<SampleEntry>> loader, List<SampleEntry> data)
         {
         Scribe.locus();
-        ((DailyListAdapter)getListAdapter()).setData( data );
+        ((DailyListAdapter)getListAdapter()).setMonthlyData( data );
 
         centralProgressBar.setVisibility( View.GONE );
         }
 
     @Override
-    public void onLoaderReset(Loader<List<ComplexDailyData.EntryData>> loader)
+    public void onLoaderReset(Loader<List<OLDComplexDailyData.EntryData>> loader)
         {
         Scribe.locus();
-        ((DailyListAdapter)getListAdapter()).setData( null );
+        ((DailyListAdapter)getListAdapter()).setMonthlyData( null );
         }
 */
     public void onProgress(int who, int maxCycles, int cycle)

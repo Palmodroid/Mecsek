@@ -21,7 +21,7 @@ import digitalgarden.mecsek.scribe.Scribe;
 
 /**
  * Simple list-adapter extends {@link BaseAdapter}implements {@link Filterable}.
- * Data source is an external {@code ArrayList} of {@link ComplexDailyData.EntryData}-s.
+ * Data source is an external {@code ArrayList} of {@link OLDComplexDailyData.EntryData}-s.
  */
 public class DailyListAdapter extends BaseAdapter implements Filterable
     {
@@ -31,9 +31,9 @@ public class DailyListAdapter extends BaseAdapter implements Filterable
     private Context context;
 
     /** Copy of external source of data */
-    private List<ComplexDailyData.EntryData> originalEntries;
+    private List<OLDComplexDailyData.EntryData> originalEntries;
     /** List of filtered entries */
-    private List<ComplexDailyData.EntryData> filteredEntries;
+    private List<OLDComplexDailyData.EntryData> filteredEntries;
 
     /** Filter */
     private EntryFilter entryFilter;
@@ -49,9 +49,9 @@ public class DailyListAdapter extends BaseAdapter implements Filterable
 
     /**
      * Setup full dataset. Filter will be OFF.
-     * @param entries external datasource {@code ArrayList} of {@link ComplexDailyData.EntryData}-s
+     * @param entries external datasource {@code ArrayList} of {@link OLDComplexDailyData.EntryData}-s
      */
-    public void setData( List<ComplexDailyData.EntryData> entries )
+    public void setData( List<OLDComplexDailyData.EntryData> entries )
         {
         Scribe.locus();
 
@@ -93,7 +93,7 @@ public class DailyListAdapter extends BaseAdapter implements Filterable
         }
 
     @Override
-    public ComplexDailyData.EntryData getItem( int position )
+    public OLDComplexDailyData.EntryData getItem(int position )
         {
         return filteredEntries.get( position );
         }
@@ -141,13 +141,13 @@ public class DailyListAdapter extends BaseAdapter implements Filterable
     /**
      * {@inheritDoc}
      * <p>
-     * {@link ComplexDailyData.EntryData} cannot be null,
+     * {@link OLDComplexDailyData.EntryData} cannot be null,
      * but it's data can contain a null String, in this case "- empty -" will be shown.
      */
     @Override
     public View getView(int position, View convertView, ViewGroup parent)
         {
-        ComplexDailyData.EntryData entry = getItem(position);
+        OLDComplexDailyData.EntryData entry = getItem(position);
         ViewHolder viewHolder;
 
         if ( convertView == null )
@@ -241,7 +241,7 @@ public class DailyListAdapter extends BaseAdapter implements Filterable
             // the new list will be returned for publishResults
             else
                 {
-                List<ComplexDailyData.EntryData> filterList = new ArrayList<>();
+                List<OLDComplexDailyData.EntryData> filterList = new ArrayList<>();
                 constraint = constraint.toString().toLowerCase( Locale.getDefault() );
                 Scribe.debug("Filtering with <" + constraint + ">");
 
@@ -316,7 +316,7 @@ public class DailyListAdapter extends BaseAdapter implements Filterable
             // filterCounter has not been changed during filtering - this is the last filter request
             if ( filterResults.count == filterCounter )
                 {
-                filteredEntries = (List<ComplexDailyData.EntryData>) filterResults.values;
+                filteredEntries = (List<OLDComplexDailyData.EntryData>) filterResults.values;
                 Scribe.debug("Filtering finished, filteredEntries changed, contains " + (filteredEntries == null ? "NO" : filteredEntries.size()) + " items. [" + constraint + "]" );
 
                 DailyListAdapter.super.notifyDataSetChanged();

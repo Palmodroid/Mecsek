@@ -43,7 +43,7 @@ public class MonthlyHeaderLayout extends CheckedLayout
         ComplexHeaderView child = new ComplexHeaderView(getContext());
         child.setTextPaint(textPaint);
         child.setText(nameOfDays[col]);
-        child.setBackgroundColor( ComplexDailyData.getColorForDayName(col) );
+        child.setBackgroundColor( OLDComplexDailyData.getColorForDayName(col) );
         return child;
         }
     }
