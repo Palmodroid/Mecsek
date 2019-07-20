@@ -68,7 +68,7 @@ public class DataStore
 
         MonthlyData monthlyData = getMonthlyData( longtime.getMonthIndex() );
 
-        int day = longtime.get( Longtime.DAY-1 ); // !!!!!!!!!!!!!!!!!! -1 kell, vagy itt kell??
+        int day = longtime.get( Longtime.DAY )-1; // !!!!!!!!!!!!!!!!!! -1 kell, vagy itt kell??
 
         DailyData dailyData = monthlyData.getDailyDataWithOffset( day );
 

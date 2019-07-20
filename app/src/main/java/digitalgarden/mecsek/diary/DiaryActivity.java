@@ -16,6 +16,7 @@ import android.widget.Toast;
 import digitalgarden.mecsek.R;
 
 import digitalgarden.mecsek.scribe.Scribe;
+import digitalgarden.mecsek.utils.Longtime;
 
 /**
  * OLDDiaryActivity shows the ViewPager, which gets its data from the OLDDiaryAdapter.
@@ -23,12 +24,14 @@ import digitalgarden.mecsek.scribe.Scribe;
  * OLDMonthlyViewerData stores all data on a daily basis.
  */
 public class DiaryActivity extends AppCompatActivity
-        implements MonthlyFragment.ConnectionToActivity
+        implements ConnectionToActivity
     {
     private DataStore dataStore;
 
     private FragmentStatePagerAdapter monthlyAdapter;
     private FragmentStatePagerAdapter dailyAdapter;
+
+    ViewPager viewPagerDaily;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -53,14 +56,14 @@ public class DiaryActivity extends AppCompatActivity
         dataStore = new DataStore(this);
 
         monthlyAdapter = new MonthlyAdapter( getSupportFragmentManager() );
-        dailyAdapter = new DailyAdapter( getSupportFragmentManager(), dataStore.getToday().get());
+        dailyAdapter = new DailyAdapter( getSupportFragmentManager() );
 
-        ViewPager viewPagerMonthly = (ViewPager) findViewById(R.id.view_pager_monthly);
+        final ViewPager viewPagerMonthly = (ViewPager) findViewById(R.id.view_pager_monthly);
         viewPagerMonthly.setAdapter(monthlyAdapter);
         viewPagerMonthly.setCurrentItem( dataStore.getToday().getMonthIndex() );
         viewPagerMonthly.setOffscreenPageLimit(1);
 
-        ViewPager viewPagerDaily = (ViewPager) findViewById(R.id.view_pager_daily);
+        viewPagerDaily = (ViewPager) findViewById(R.id.view_pager_daily);
         viewPagerDaily.setAdapter(dailyAdapter);
         viewPagerDaily.setCurrentItem( dataStore.getToday().getDayIndex() );
         viewPagerDaily.setOffscreenPageLimit(1);
@@ -94,6 +97,41 @@ public class DiaryActivity extends AppCompatActivity
                 // Code goes here
                 }
             });
+
+        // Attach the page change listener inside the activity
+        viewPagerDaily.addOnPageChangeListener(new ViewPager.OnPageChangeListener()
+            {
+
+            // This method will be invoked when a new page becomes selected.
+            @Override
+            public void onPageSelected(int position)
+                {
+                Toast.makeText(DiaryActivity.this,
+                        "Selected day position: " + position, Toast.LENGTH_SHORT).show();
+
+                Longtime longtime = new Longtime();
+
+                longtime.setDayIndex( position );
+
+                viewPagerMonthly.setCurrentItem( longtime.getMonthIndex() );
+                }
+
+            // This method will be invoked when the current page is scrolled
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels)
+                {
+                // Code goes here
+                }
+
+            // Called when the scroll state changes:
+            // SCROLL_STATE_IDLE, SCROLL_STATE_DRAGGING, SCROLL_STATE_SETTLING
+            @Override
+            public void onPageScrollStateChanged(int state)
+                {
+                // Code goes here
+                }
+            });
+
         }
 
     @Override
@@ -131,7 +169,7 @@ public class DiaryActivity extends AppCompatActivity
     @Override
     public void onReady( DailyData data)
         {
-
+        viewPagerDaily.setCurrentItem( data.dayIndex );
         }
 
     @Override

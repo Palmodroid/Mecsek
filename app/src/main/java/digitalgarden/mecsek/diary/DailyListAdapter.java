@@ -31,9 +31,9 @@ public class DailyListAdapter extends BaseAdapter implements Filterable
     private Context context;
 
     /** Copy of external source of data */
-    private List<OLDComplexDailyData.EntryData> originalEntries;
+    private List<DataEntry> originalEntries;
     /** List of filtered entries */
-    private List<OLDComplexDailyData.EntryData> filteredEntries;
+    private List<DataEntry> filteredEntries;
 
     /** Filter */
     private EntryFilter entryFilter;
@@ -51,7 +51,7 @@ public class DailyListAdapter extends BaseAdapter implements Filterable
      * Setup full dataset. Filter will be OFF.
      * @param entries external datasource {@code ArrayList} of {@link OLDComplexDailyData.EntryData}-s
      */
-    public void setData( List<OLDComplexDailyData.EntryData> entries )
+    public void setData( List<DataEntry> entries )
         {
         Scribe.locus();
 
@@ -93,7 +93,7 @@ public class DailyListAdapter extends BaseAdapter implements Filterable
         }
 
     @Override
-    public OLDComplexDailyData.EntryData getItem(int position )
+    public DataEntry getItem(int position )
         {
         return filteredEntries.get( position );
         }
@@ -147,7 +147,7 @@ public class DailyListAdapter extends BaseAdapter implements Filterable
     @Override
     public View getView(int position, View convertView, ViewGroup parent)
         {
-        OLDComplexDailyData.EntryData entry = getItem(position);
+        DataEntry entry = getItem(position);
         ViewHolder viewHolder;
 
         if ( convertView == null )
@@ -165,7 +165,7 @@ public class DailyListAdapter extends BaseAdapter implements Filterable
             viewHolder = (ViewHolder) convertView.getTag();
             }
 
-        viewHolder.longTextView.setText( Long.toString( entry.getDate() ));
+        viewHolder.longTextView.setText( entry.getDate().toString() );
         viewHolder.stringTextView.setText( entry.getNote() == null ? "- empty -" :
                 entry.getNote() );
 
@@ -241,7 +241,7 @@ public class DailyListAdapter extends BaseAdapter implements Filterable
             // the new list will be returned for publishResults
             else
                 {
-                List<OLDComplexDailyData.EntryData> filterList = new ArrayList<>();
+                List<DataEntry> filterList = new ArrayList<>();
                 constraint = constraint.toString().toLowerCase( Locale.getDefault() );
                 Scribe.debug("Filtering with <" + constraint + ">");
 
@@ -316,7 +316,7 @@ public class DailyListAdapter extends BaseAdapter implements Filterable
             // filterCounter has not been changed during filtering - this is the last filter request
             if ( filterResults.count == filterCounter )
                 {
-                filteredEntries = (List<OLDComplexDailyData.EntryData>) filterResults.values;
+                filteredEntries = (List<DataEntry>) filterResults.values;
                 Scribe.debug("Filtering finished, filteredEntries changed, contains " + (filteredEntries == null ? "NO" : filteredEntries.size()) + " items. [" + constraint + "]" );
 
                 DailyListAdapter.super.notifyDataSetChanged();

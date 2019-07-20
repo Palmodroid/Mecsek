@@ -30,6 +30,7 @@ import java.util.List;
 import digitalgarden.mecsek.R;
 import digitalgarden.mecsek.scribe.Scribe;
 import digitalgarden.mecsek.utils.Keyboard;
+import digitalgarden.mecsek.utils.Longtime;
 
 public class DailyListFragment extends ListFragment implements
 //                                                   LoaderManager.LoaderCallbacks<List<SampleEntry>>,
@@ -38,20 +39,22 @@ public class DailyListFragment extends ListFragment implements
     {
     private int dayIndex;
 
-
     /** ID for Loader */
     // private final int LOADER_ID = 1;
 
-    /** Registered progressObserver */
+    /**
+     * Registered progressObserver
+     */
     private ProgressObserver progressObserver;
 
     // static factory method
     // http://www.androiddesignpatterns.com/2012/05/using-newinstance-to-instantiate.html
+
     /**
      * Creates a new MainListFragment instance
      * (Parameters should be converted to arguments)
      */
-    public static ListFragment newInstance( int dayIndex )
+    public static ListFragment newInstance(int dayIndex)
         {
         ListFragment listFragment = new DailyListFragment();
 
@@ -87,7 +90,6 @@ public class DailyListFragment extends ListFragment implements
         }
 
 
-
     @Override
     public void onCreate(Bundle savedInstanceState)
         {
@@ -95,6 +97,8 @@ public class DailyListFragment extends ListFragment implements
         super.onCreate(savedInstanceState);
 
         dayIndex = getArguments().getInt("DSE");
+
+        Scribe.debug("DSE: " + dayIndex );
         }
 
 
@@ -132,12 +136,18 @@ public class DailyListFragment extends ListFragment implements
             public void onTextChanged(CharSequence s, int start, int before, int count)
                 {
                 Scribe.debug("Filter text was changed!");
-                ((DailyListAdapter)getListAdapter()).filter( s );
+                ((DailyListAdapter) getListAdapter()).filter(s);
                 }
+
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            public void beforeTextChanged(CharSequence s, int start, int count, int after)
+                {
+                }
+
             @Override
-            public void afterTextChanged(Editable s) {}
+            public void afterTextChanged(Editable s)
+                {
+                }
             });
 
         return view;
@@ -157,38 +167,56 @@ public class DailyListFragment extends ListFragment implements
         dailyData =
                 connectionToActivity.getDataStore().getDailyData(dayIndex);
 
+        dailyData.setDailyFragment(this);
+
         // Set up adapter
-        setListAdapter( new DailyListAdapter( getActivity() ) );
+        setListAdapter(new DailyListAdapter(getActivity()));
 
         // Data will be loaded by Loader, Loader will be controlled by LoaderManager
         // getLoaderManager().initLoader( LOADER_ID , null, this);
 
         // for long-click check
-        getListView().setOnItemLongClickListener( this );
+        getListView().setOnItemLongClickListener(this);
 
-        getListView().setOnTouchListener( new View.OnTouchListener()
+        getListView().setOnTouchListener(new View.OnTouchListener()
             {
             @Override
             public boolean onTouch(View v, MotionEvent event)
                 {
                 if (event.getAction() == MotionEvent.ACTION_DOWN)
-                    Keyboard.hide( getActivity() );
+                    Keyboard.hide(getActivity());
                 return false;
                 }
             });
 
         //((TextView)(getListView().getEmptyView())).setText("Changed empty text");
 
-        refreshButton.setOnClickListener( new View.OnClickListener()
+        refreshButton.setOnClickListener(new View.OnClickListener()
             {
             @Override
-            public void onClick( View view )
+            public void onClick(View view)
                 {
                 Scribe.debug("Simulated data changes - sending broadcast");
                 Intent intent = new Intent("DatasetChanged");
-                LocalBroadcastManager.getInstance( getActivity() ).sendBroadcast(intent);
+                LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(intent);
                 }
             });
+
+        dailyData.createLoader();
+        }
+
+
+    public void onLoadFinished( List<DataEntry> dataEntryListToUse )
+        {
+        if ( dataEntryListToUse.size() > 0 )
+            Scribe.debug("DSE - Van elem benne!!!!");
+
+        //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        dataEntryListToUse.add( new DataEntry(12L,
+                "Day: " + dailyData.dayOfMonth + " Index: " + dayIndex ,
+                new Longtime()));
+
+        ((DailyListAdapter)getListAdapter()).setData( dataEntryListToUse );
         }
 
     @Override

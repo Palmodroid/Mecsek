@@ -11,6 +11,9 @@ import digitalgarden.mecsek.utils.Longtime;
  */
 public class DailyData
     {
+    // Mi van a LOADER reset stb. beállításaal?????????????????????
+
+
     // List for loading data
     private List<DataEntry> dataEntryListToLoad = new ArrayList<>();
 
@@ -18,11 +21,15 @@ public class DailyData
     private List<DataEntry> dataEntryListToUse = null;
 
     // Day of the month as string (to show as header)
-    private String dayOfMonth;
+public String dayOfMonth;
+
+public int dayIndex;
 
     // Basic background color of the day - can be altered by loaded entries
     private int dayColor;
 
+
+public MonthlyData monthlyData;
 
     /**
      * These parameters are needed first to set up a day.
@@ -31,9 +38,12 @@ public class DailyData
      * @param month month of this monthly view
      * @param today datestamp of today, comes from OLDDiaryActivity without timeinfo
      */
-    public DailyData(Longtime longtime, int month, long today)
+    public DailyData(MonthlyData monthlyData, Longtime longtime, int month, long today)
         {
+        this.monthlyData = monthlyData;
+
         dayOfMonth = longtime.toStringDayOfMonth();
+        dayIndex = longtime.getDayIndex();
 
         if ( today == longtime.get() )
             dayColor = 0xFFCD3925;
@@ -63,10 +73,25 @@ public class DailyData
         dataEntryListToLoad.add( new DataEntry(id, note, date));
         }
 
+    private DailyListFragment dailyFragment = null;
+
+    public void setDailyFragment( DailyListFragment dailyFragment )
+        {
+        this.dailyFragment = dailyFragment;
+        }
+
+    public void createLoader()
+        {
+        monthlyData.createLoader();
+        }
+
     public void onLoadFinished()
         {
         dataEntryListToUse = dataEntryListToLoad;
         dataEntryListToLoad = new ArrayList<>();
+
+        if ( dailyFragment != null )
+            dailyFragment.onLoadFinished( dataEntryListToUse );
         }
 
     public List<DataEntry> getEntryDataList()

@@ -34,7 +34,8 @@ public class MonthlyAdapter extends FragmentStatePagerAdapter
     @Override
     public CharSequence getPageTitle(int position)
         {
-        return (1601 + (position / 12)) + "." + (position % 12 + 1);
+        return ">" + position + "<";
+        //return (1601 + (position / 12)) + "." + (position % 12 + 1);
         }
 
 

@@ -11,16 +11,10 @@ import digitalgarden.mecsek.scribe.Scribe;
 public class DailyAdapter extends FragmentStatePagerAdapter
     {
     private static int NUM_DAYS = 167880;
-    private long today;
 
-    FragmentManager fm;
-
-
-    public DailyAdapter(FragmentManager fragmentManager, long today)
+    public DailyAdapter(FragmentManager fragmentManager )
         {
         super(fragmentManager);
-        this.today = today;
-        fm = fragmentManager;
         }
 
     // Returns total number of pages
@@ -34,7 +28,7 @@ public class DailyAdapter extends FragmentStatePagerAdapter
     @Override
     public Fragment getItem(int position)
         {
-        // position == montsSinceEpoch
+        // position == daysSinceEpoch
         return DailyListFragment.newInstance( position ); //null;
         }
 
@@ -51,11 +45,13 @@ public class DailyAdapter extends FragmentStatePagerAdapter
         {
         super.destroyItem(container, position, object);
 
+        /*
         for ( Fragment f : fm.getFragments())
             {
             Scribe.debug("Fragment: " + f.getTag());
             }
 
         Scribe.debug("Item destroyed: " + position);
+        */
         }
     }

@@ -31,7 +31,7 @@ public class MonthlyData implements LoaderManager.LoaderCallbacks<Cursor>
     private DailyData[] dailyDataArray = new DailyData[42];
 
     // monthIndex == index of the ViewPager
-    private int monthIndex;
+public int monthIndex;
 
     // "Name" of this month as string (Year, Month and Month as string)
     private String yearMonthString;
@@ -84,7 +84,7 @@ public class MonthlyData implements LoaderManager.LoaderCallbacks<Cursor>
         Longtime longtime = longtimeFirst.duplicate();
         for (int n = 0; n < 42; n++)
             {
-            dailyDataArray[n] = new DailyData(longtime, month, dataStore.getToday().get());
+            dailyDataArray[n] = new DailyData(this, longtime, month, dataStore.getToday().get());
             // ((ComplexDailyView) monthlyViewerLayout.getChildAt(n)).setMonthlyData(dailyDataArray[n]);
             longtime.addDays(1); // 86350
             }
