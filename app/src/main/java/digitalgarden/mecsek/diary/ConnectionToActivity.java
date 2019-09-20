@@ -4,6 +4,8 @@ package digitalgarden.mecsek.diary;
 public interface ConnectionToActivity
     {
     public void onReady(DailyData data);
+    public void onLongClickDetected(DailyData data);
     public DataStore getDataStore();
+    public void onItemEditing(long id);
     }
 

@@ -47,6 +47,23 @@ import digitalgarden.mecsek.utils.Keyboard;
  *
  */
 
+
+/*
+
+Több elvi lehetőségünk van:
+
+-   MEGNYILIK   ALAPÉRTELMEZETT     KIVÁLASZTÁSKOR      VISSZA      HOSSZÚ      VISSZA
+"sima" lista
+    LIST                            EDIT                LIST
+lista szelektáláshoz
+    LIST       SELECTED_ITEM        ITEM_SELECTED                   EDIT        ITEM_SELECTED
+"sima" edit
+    EDIT       EDITED_ITEM                              LIST
+edit máshonnan, lista nélkül (pl. diary ilyen)
+    EDIT       EDITED_ITEM
+ */
+
+
 public abstract class GenericControllActivity extends AppCompatActivity
         implements GenericListFragment.OnListReturnedListener, GenericEditFragment.OnFinishedListener
     {
@@ -226,7 +243,7 @@ public abstract class GenericControllActivity extends AppCompatActivity
             long editedItem = getIntent().getLongExtra(GenericEditFragment.EDITED_ITEM,-1L);
 
             // Van EDITÁLANDÓ értékünk - EZ ONITEMEDITINGBŐL JÖTT NEM LEHET KÉT ILYEN !!!!!!!!!!!!!!!!!!!!!!!!
-            if ( editedItem >= 0L )
+            if ( editedItem >= -0L )
                 {
                 editFrag = createEditFragment();
                 Bundle args = new Bundle();

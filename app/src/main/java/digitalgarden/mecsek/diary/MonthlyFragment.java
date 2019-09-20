@@ -122,7 +122,7 @@ public class MonthlyFragment extends Fragment
     @Override
     public boolean onLongClick(View v)
         {
-        connectionToActivity.onReady( ((ComplexDailyView)v).getDailyData() );
+        connectionToActivity.onLongClickDetected( ((ComplexDailyView)v).getDailyData() );
         return true;
         }
 

@@ -13,6 +13,7 @@ import digitalgarden.mecsek.scribe.Scribe;
 import digitalgarden.mecsek.utils.Longtime;
 
 import static digitalgarden.mecsek.database.DatabaseMirror.column;
+import static digitalgarden.mecsek.database.DatabaseMirror.column_id;
 import static digitalgarden.mecsek.database.DatabaseMirror.table;
 import static digitalgarden.mecsek.database.library.LibraryDatabase.CALENDAR;
 
@@ -130,6 +131,7 @@ public int monthIndex;
             }
 
         String[] projection = {
+                column_id(),
                 column(CalendarTable.DATE),
                 column(CalendarTable.NOTE)};
 
@@ -174,7 +176,8 @@ public int monthIndex;
                     (cursor.getLong(cursor.getColumnIndexOrThrow(column(CalendarTable.DATE))));
             dailyDataArray[longtime.getDayIndex() - dayIndexOfFirstDay]
                     .addEntryData(
-                            longtime.getDayIndex(), // ?????????????????????????????????????????
+                            cursor.getLong( cursor.getColumnIndexOrThrow( column_id() ) ),
+                            // longtime.getDayIndex(), // ?????????????????????????????????????????
                             longtime,
                             cursor.getString(cursor.getColumnIndexOrThrow(column(CalendarTable.NOTE))));
             }

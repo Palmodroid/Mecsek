@@ -155,6 +155,16 @@ public abstract class GenericEditFragment extends Fragment
         return editField;
         }
 
+    public EditField addEditField( int editFieldId, int columnIndex, String hintKey )
+        {
+        EditField editField = addEditField( editFieldId, columnIndex );
+        editField.setHint( getArguments(), hintKey );
+
+        return editField;
+        }
+
+
+
     public ForeignKey addForeignKey( int foreignKeyIndex, int foreignTableIndex,
                                      Class<?> selectorActivity, String selectorTitle, TextView selectorTitleOwner )
         {
@@ -478,7 +488,7 @@ public abstract class GenericEditFragment extends Fragment
 
     // Itt jelezzük, ha megszakítani kívánjuk a szerkesztést
     // isEdited() esetén egy dialogusablakban meg kell erősíteni a szándékunkat
-    protected void cancelEdit()
+    public void cancelEdit()
     	{
     	Scribe.note("General EDIT Fragment: cancelEdit was started");
     	

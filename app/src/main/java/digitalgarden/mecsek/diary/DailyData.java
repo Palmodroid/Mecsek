@@ -20,6 +20,8 @@ public class DailyData
     // List for data to show (loaded data is be moved here after loading finished)
     private List<DataEntry> dataEntryListToUse = null;
 
+public long longtime;
+
     // Day of the month as string (to show as header)
 public String dayOfMonth;
 
@@ -41,6 +43,8 @@ public MonthlyData monthlyData;
     public DailyData(MonthlyData monthlyData, Longtime longtime, int month, long today)
         {
         this.monthlyData = monthlyData;
+
+        this.longtime = longtime.get();
 
         dayOfMonth = longtime.toStringDayOfMonth();
         dayIndex = longtime.getDayIndex();

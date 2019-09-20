@@ -102,4 +102,13 @@ public abstract class EditField extends AppCompatEditText implements Connection.
         {
         // No source for edit fields
         }
+
+    public void setHint( Bundle arguments, String hintKey )
+        {
+        String hint = arguments.getString( hintKey );
+        if ( hint != null )
+            {
+            setText( hint );
+            }
+        }
     }

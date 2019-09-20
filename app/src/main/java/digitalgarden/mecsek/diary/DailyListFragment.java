@@ -253,10 +253,12 @@ public class DailyListFragment extends ListFragment implements
     @Override
     public void onListItemClick (ListView listView, View view, int position, long id)
         {
-        Scribe.debug("List item " + position + " was SHORT clicked");
+        Scribe.debug("List item " + position + " id: " + id + " was SHORT clicked: " + ((DataEntry)(getListAdapter().getItem(position))).getId());
         // Toast.makeText(getActivity(),
         //        "List item " + ((SampleEntry)(getListAdapter().getItem(position))).getString()
         // + " was SHORT clicked", Toast.LENGTH_LONG).show();
+
+        connectionToActivity.onItemEditing( ((DataEntry)(getListAdapter().getItem(position))).getId() );
         }
 
     // for long-click check
