@@ -21,7 +21,7 @@ import digitalgarden.mecsek.scribe.Scribe;
 
 /**
  * Simple list-adapter extends {@link BaseAdapter}implements {@link Filterable}.
- * Data source is an external {@code ArrayList} of {@link OLDComplexDailyData.EntryData}-s.
+ * Data source is an external {@code ArrayList} of EntryData-s.
  */
 public class DailyListAdapter extends BaseAdapter implements Filterable
     {
@@ -48,8 +48,8 @@ public class DailyListAdapter extends BaseAdapter implements Filterable
         }
 
     /**
-     * Setup full dataset. Filter will be OFF.
-     * @param entries external datasource {@code ArrayList} of {@link OLDComplexDailyData.EntryData}-s
+     * Setup full dataset. Filter can be OFF or can be forced.
+     * @param entries
      */
     public void setData( List<DataEntry> entries )
         {
@@ -141,8 +141,15 @@ public class DailyListAdapter extends BaseAdapter implements Filterable
     /**
      * {@inheritDoc}
      * <p>
-     * {@link OLDComplexDailyData.EntryData} cannot be null,
+     * EntryData cannot be null,
      * but it's data can contain a null String, in this case "- empty -" will be shown.
+     *
+     * [Idea behind viewHolder:
+     * convertView is a comlex, ready View - without its data
+     * viewHolder (as its tag) contains its classes
+     * To make convertView ready:
+     * Just set its views' data inside its tag!
+     * No view inflation is needed (if convertView is ready), only entering data]
      */
     @Override
     public View getView(int position, View convertView, ViewGroup parent)
@@ -181,6 +188,8 @@ public class DailyListAdapter extends BaseAdapter implements Filterable
     /**
      * Filter with the given constraint. Constraint will be stored for repeated filtering.
      * @param constraint filtered list item contains this string
+     *
+     * [Called by ListFragment - On filter Text Changed]
      */
     public void filter(CharSequence constraint)
         {
@@ -190,6 +199,8 @@ public class DailyListAdapter extends BaseAdapter implements Filterable
 
     /**
      * Filter with the previous constraint
+     *
+     * [The real "filter()" - Called by filter(s) and by setData() methods]
      */
     public void filter()
         {
@@ -199,6 +210,7 @@ public class DailyListAdapter extends BaseAdapter implements Filterable
         }
 
     // http://stackoverflow.com/a/13514663 - Search and Filter List
+    // [Needed by the superclass]
     public Filter getFilter()
         {
         Scribe.locus();
@@ -248,12 +260,12 @@ public class DailyListAdapter extends BaseAdapter implements Filterable
                 try {
                 for ( int i=0; i < originalEntries.size(); i++ )
                     {
-                    // Sending progress
+                    /* NO PUBLISHING IS NEEDED !!! // Sending progress
                     Intent intent = new Intent(ProgressObserver.ACTION_STRING);
                     intent.putExtra( ProgressObserver.DATA_WHO, ProgressObserver.FILTER );
                     intent.putExtra( ProgressObserver.DATA_CYCLE, i+1 );
                     intent.putExtra( ProgressObserver.DATA_MAX_CYCLES, originalEntries.size() );
-                    LocalBroadcastManager.getInstance( context ).sendBroadcast(intent);
+                    LocalBroadcastManager.getInstance( context ).sendBroadcast(intent); */
 
                     // New filtering has been started - stop this one!
                     if ( filterCounter != filterResults.count )
@@ -288,11 +300,11 @@ public class DailyListAdapter extends BaseAdapter implements Filterable
                     }
                 finally
                     {
-                    // Finishing progress
+                    /* NO PUBLISHING IS NEEDED !!! // Finishing progress
                     Intent intent = new Intent(ProgressObserver.ACTION_STRING);
                     intent.putExtra( ProgressObserver.DATA_WHO, ProgressObserver.FILTER );
                     intent.putExtra( ProgressObserver.DATA_MAX_CYCLES, -1 );
-                    LocalBroadcastManager.getInstance( context ).sendBroadcast(intent);
+                    LocalBroadcastManager.getInstance( context ).sendBroadcast(intent); */
                     }
                 }
 

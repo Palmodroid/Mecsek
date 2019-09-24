@@ -151,6 +151,7 @@ public class DiaryActivity extends AppCompatActivity
         setContentView(R.layout.activity_diary_new);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        toolbar.setVisibility(View.GONE);
 
         dailyFrame = findViewById( R.id.frame_daily );
 

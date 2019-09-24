@@ -9,7 +9,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="5dp"
-        android:text="Long" />
+        android:text="Long"
+        android:visibility="gone"/>
 
     <TextView
         android:id="@+id/string_text_view"

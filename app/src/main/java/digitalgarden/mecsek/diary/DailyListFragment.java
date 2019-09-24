@@ -34,7 +34,7 @@ import digitalgarden.mecsek.utils.Longtime;
 
 public class DailyListFragment extends ListFragment implements
 //                                                   LoaderManager.LoaderCallbacks<List<SampleEntry>>,
-                                                   ProgressObserver.OnProgressListener,
+//                                                   ProgressObserver.OnProgressListener,
                                                    AdapterView.OnItemLongClickListener // for long-click check
     {
     private int dayIndex;
@@ -42,10 +42,10 @@ public class DailyListFragment extends ListFragment implements
     /** ID for Loader */
     // private final int LOADER_ID = 1;
 
-    /**
+    /* NO PUBLISHING IS NEEDED !!!
      * Registered progressObserver
-     */
-    private ProgressObserver progressObserver;
+     *
+    private ProgressObserver progressObserver; */
 
     // static factory method
     // http://www.androiddesignpatterns.com/2012/05/using-newinstance-to-instantiate.html
@@ -102,15 +102,17 @@ public class DailyListFragment extends ListFragment implements
         }
 
 
-    private Button refreshButton;
+    // private Button refreshButton;
     private EditText filter;
+
+    private TextView title;
 
     // private ProgressBar loaderProgressBar;
     // private TextView loaderProgress;
-    private ProgressBar filterProgressBar;
-    private TextView filterProgress;
+    // private ProgressBar filterProgressBar;
+    // private TextView filterProgress;
 
-    private ProgressBar centralProgressBar;
+    // private ProgressBar centralProgressBar;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -120,16 +122,19 @@ public class DailyListFragment extends ListFragment implements
 
         View view = inflater.inflate(R.layout.daily_list_fragment, container, false);
 
-        refreshButton = (Button) view.findViewById(R.id.refresh_button);
+        // refreshButton = (Button) view.findViewById(R.id.refresh_button);
 
         // loaderProgressBar = (ProgressBar) view.findViewById(R.id.loader_progress_bar);
         // loaderProgress = (TextView) view.findViewById(R.id.loader_progress);
-        filterProgressBar = (ProgressBar) view.findViewById(R.id.filter_progress_bar);
-        filterProgress = (TextView) view.findViewById(R.id.filter_progress);
+        // filterProgressBar = (ProgressBar) view.findViewById(R.id.filter_progress_bar);
+        // filterProgress = (TextView) view.findViewById(R.id.filter_progress);
 
-        centralProgressBar = (ProgressBar) view.findViewById(R.id.central_progress_bar);
+        // centralProgressBar = (ProgressBar) view.findViewById(R.id.central_progress_bar);
+
+        title = (TextView) view.findViewById( R.id.title);
 
         filter = (EditText) view.findViewById(R.id.filter);
+
         filter.addTextChangedListener(new TextWatcher()
             {
             @Override
@@ -167,6 +172,8 @@ public class DailyListFragment extends ListFragment implements
         dailyData =
                 connectionToActivity.getDataStore().getDailyData(dayIndex);
 
+        title.setText( dailyData.longtimeString );
+
         dailyData.setDailyFragment(this);
 
         // Set up adapter
@@ -191,6 +198,7 @@ public class DailyListFragment extends ListFragment implements
 
         //((TextView)(getListView().getEmptyView())).setText("Changed empty text");
 
+        /*
         refreshButton.setOnClickListener(new View.OnClickListener()
             {
             @Override
@@ -200,7 +208,7 @@ public class DailyListFragment extends ListFragment implements
                 Intent intent = new Intent("DatasetChanged");
                 LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(intent);
                 }
-            });
+            }); */
 
         dailyData.createLoader();
         }
@@ -211,14 +219,15 @@ public class DailyListFragment extends ListFragment implements
         if ( dataEntryListToUse.size() > 0 )
             Scribe.debug("DSE - Van elem benne!!!!");
 
-        //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        dataEntryListToUse.add( new DataEntry(12L,
-                "Day: " + dailyData.dayOfMonth + " Index: " + dayIndex ,
-                new Longtime()));
+        // Just for testing !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        // dataEntryListToUse.add( new DataEntry(12L,
+        //        "Day: " + dailyData.dayOfMonth + " Index: " + dayIndex ,
+        //        new Longtime()));
 
         ((DailyListAdapter)getListAdapter()).setData( dataEntryListToUse );
         }
 
+    /* NO PUBLISHING IS NEEDED !!!
     @Override
     public void onResume()
         {
@@ -247,8 +256,7 @@ public class DailyListFragment extends ListFragment implements
 
             // If last messege arrives during paused state, then progress indicators could remain !!
             }
-
-        }
+        } */
 
     @Override
     public void onListItemClick (ListView listView, View view, int position, long id)
@@ -296,9 +304,11 @@ public class DailyListFragment extends ListFragment implements
         ((DailyListAdapter)getListAdapter()).setMonthlyData( null );
         }
 */
+
+    /* NO PUBLISHING IS NEEDED !!!
     public void onProgress(int who, int maxCycles, int cycle)
         {
-/*        if (who == ProgressObserver.LOADER)
+        if (who == ProgressObserver.LOADER)
             {
             if ( maxCycles < 0 )
                 {
@@ -317,7 +327,7 @@ public class DailyListFragment extends ListFragment implements
                 getActivity().setProgressBarIndeterminateVisibility( true );
                 }
             }
-*/
+
         if (who == ProgressObserver.FILTER)
             {
             if ( maxCycles < 0 )
@@ -332,5 +342,5 @@ public class DailyListFragment extends ListFragment implements
                 filterProgress.setText("Filter: " + cycle + "/" + maxCycles);
                 }
             }
-        }
+        } */
     }

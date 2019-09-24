@@ -22,6 +22,8 @@ public class DailyData
 
 public long longtime;
 
+public String longtimeString;
+
     // Day of the month as string (to show as header)
 public String dayOfMonth;
 
@@ -45,6 +47,8 @@ public MonthlyData monthlyData;
         this.monthlyData = monthlyData;
 
         this.longtime = longtime.get();
+
+        this.longtimeString = longtime.toString( true );
 
         dayOfMonth = longtime.toStringDayOfMonth();
         dayIndex = longtime.getDayIndex();
